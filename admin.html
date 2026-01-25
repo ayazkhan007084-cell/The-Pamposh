@@ -1,0 +1,46 @@
+<!DOCTYPE html>
+<html>
+<head>
+<title>Admin Panel - Pamposh Electricals</title>
+<style>
+body{font-family:Arial;padding:30px;background:#f4f6f8}
+input,button{padding:10px;margin:8px 0;width:100%}
+button{background:#0b1c2d;color:white;border:none;cursor:pointer}
+</style>
+</head>
+<body>
+
+<h2>Admin Login</h2>
+<input type="password" id="pass" placeholder="Enter Password">
+<button onclick="login()">Login</button>
+
+<div id="admin" style="display:none;">
+  <h2>Add New Product</h2>
+  <input type="text" id="name" placeholder="Product Name">
+  <input type="number" id="price" placeholder="Price in ₹">
+  <input type="text" id="img" placeholder="Image URL">
+  <button onclick="addProduct()">Add Product</button>
+</div>
+
+<script>
+function login(){
+ if(document.getElementById("pass").value==="pamposh123"){
+   document.getElementById("admin").style.display="block";
+   alert("Login successful");
+ }else alert("Wrong password");
+}
+
+function addProduct(){
+ let products=JSON.parse(localStorage.getItem("products"))||[];
+ products.push({
+   name:document.getElementById("name").value,
+   price:document.getElementById("price").value,
+   img:document.getElementById("img").value
+ });
+ localStorage.setItem("products",JSON.stringify(products));
+ alert("Product Added! Refresh main site.");
+}
+</script>
+
+</body>
+</html>
