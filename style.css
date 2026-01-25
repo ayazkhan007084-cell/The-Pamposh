@@ -76,3 +76,24 @@ body {
   font-size: 18px;
   color: #dddddd;
 }
+.social-links {
+  margin: 20px 0;
+}
+
+.social-links a {
+  display: inline-block;
+  text-decoration: none;
+  color: white;
+  padding: 12px 20px;
+  margin-right: 10px;
+  border-radius: 6px;
+  font-weight: bold;
+}
+
+.social-links a:first-child {
+  background-color: #1877f2; /* Facebook */
+}
+
+.social-links a:last-child {
+  background-color: #25d366; /* WhatsApp */
+}
