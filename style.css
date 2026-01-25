@@ -37,6 +37,34 @@ body {
   margin-top: 10px;
   padding: 8px 15px;
   background: #25D366;
+  .brand-intro {
+  text-align: center;
+  padding: 40px 15px;
+  background-color: #f8f9fa;
+}
+
+.brand-intro h1 {
+  font-weight: 700;
+}
+
+.brand-intro p {
+  font-size: 18px;
+  color: #555;
+}
+  .brand-intro {
+  text-align: center;
+  padding: 40px 15px;
+  background-color: #f8f9fa;
+}
+
+.brand-intro h1 {
+  font-weight: 700;
+}
+
+.brand-intro p {
+  font-size: 18px;
+  color: #555;
+}
   color: white;
   text-decoration: none;
   border-radius: 5px;
