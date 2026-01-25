@@ -9,25 +9,34 @@
 *{margin:0;padding:0;box-sizing:border-box;font-family:Poppins,sans-serif}
 body{background:#f4f6f8;color:#222}
 header{background:#0b1c2d;color:#fff;padding:15px 30px;display:flex;justify-content:space-between;align-items:center}
+nav a{color:#fff;margin-left:15px;text-decoration:none}
 .cart-btn{background:gold;border:none;padding:8px 14px;border-radius:20px;font-weight:bold;cursor:pointer}
 .hero{background:linear-gradient(135deg,#0b1c2d,#123a5c);color:#fff;text-align:center;padding:80px 20px}
 .section{padding:60px 20px;max-width:1100px;margin:auto}
 .products{display:grid;grid-template-columns:repeat(auto-fit,minmax(250px,1fr));gap:25px}
-.product{background:#fff;border-radius:12px;box-shadow:0 6px 18px rgba(0,0,0,.1);overflow:hidden;text-align:center}
+.product{background:#fff;border-radius:12px;box-shadow:0 6px 18px rgba(0,0,0,.1);overflow:hidden;text-align:center;transition:.3s}
+.product:hover{transform:translateY(-6px)}
 .product img{width:100%;height:180px;object-fit:cover}
 .product-content{padding:20px}
 .price{color:#0b7a0b;font-size:20px;font-weight:bold;margin:10px 0}
 .add-btn{background:#0b1c2d;color:white;border:none;padding:10px 15px;border-radius:6px;cursor:pointer}
-footer{background:#0b1c2d;color:white;padding:40px 20px;margin-top:40px;text-align:center}
-.cart-panel{position:fixed;right:-350px;top:0;width:350px;height:100%;background:white;box-shadow:-5px 0 20px rgba(0,0,0,.2);padding:20px;transition:.4s;overflow-y:auto}
+footer{background:#0b1c2d;color:white;padding:40px 20px;margin-top:40px}
+.footer-grid{max-width:1100px;margin:auto;display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:30px}
+footer a{color:white;text-decoration:none;display:block;margin:6px 0}
+.cart-panel{position:fixed;right:-350px;top:0;width:350px;height:100%;background:white;box-shadow:-5px 0 20px rgba(0,0,0,.2);padding:20px;transition:.4s;overflow-y:auto;z-index:999}
 .cart-panel.active{right:0}
+.map-container{margin-top:40px;border-radius:12px;overflow:hidden}
 </style>
 </head>
 <body>
 
 <header>
   <h1>The Pamposh Electricals</h1>
-  <button class="cart-btn" onclick="toggleCart()">🛒 (<span id="cart-count">0</span>)</button>
+  <nav>
+    <a href="#products">Products</a>
+    <a href="#contact">Contact</a>
+    <button class="cart-btn" onclick="toggleCart()">🛒 (<span id="cart-count">0</span>)</button>
+  </nav>
 </header>
 
 <section class="hero">
@@ -35,27 +44,55 @@ footer{background:#0b1c2d;color:white;padding:40px 20px;margin-top:40px;text-ali
   <p>A-Class Government Registered Electrical Contractor</p>
 </section>
 
-<section class="section">
-  <h3>Our Products</h3>
+<section class="section" id="products">
+  <h3>Our Products & Services</h3>
   <div class="products" id="product-list"></div>
+
+  <div class="map-container">
+    <iframe src="https://maps.google.com/maps?q=Red%20Cross%20Road%20Lal%20Chowk%20Srinagar&t=&z=15&ie=UTF8&iwloc=&output=embed"
+      width="100%" height="350" style="border:0;"></iframe>
+  </div>
 </section>
 
+<!-- CART -->
 <div class="cart-panel" id="cartPanel">
   <h3>Your Cart</h3>
   <div id="cart-items"></div>
   <h4>Total: ₹<span id="cart-total">0</span></h4>
+  <button onclick="checkoutWhatsApp()" style="margin-top:10px;background:#25D366;color:white;border:none;padding:10px;width:100%;border-radius:6px;">Checkout on WhatsApp</button>
 </div>
 
-<footer>
-📍 India, Kashmir, Srinagar, Red Cross Road, Lal Chowk – 190015<br>
-📧 thepamposhelectricals@gmail.com<br><br>
-© 2026 The Pamposh Electricals
+<footer id="contact">
+  <div class="footer-grid">
+    <div>
+      <h4>The Pamposh Electricals</h4>
+      📍 India, Kashmir, Srinagar<br>
+      Red Cross Road, Lal Chowk<br>
+      Pincode: 190015<br><br>
+      📧 thepamposhelectricals@gmail.com
+    </div>
+
+    <div>
+      <h4>Contact</h4>
+      <a href="https://wa.me/919419007084" target="_blank">WhatsApp</a>
+      <a href="tel:+919419007084">Call Us</a>
+    </div>
+
+    <div>
+      <h4>Follow Us</h4>
+      <a href="https://facebook.com/ayaz.khan.15887" target="_blank">Facebook</a>
+      <a href="https://www.instagram.com/thepamposhelectricals" target="_blank">Instagram</a>
+    </div>
+  </div>
+  <p style="text-align:center;margin-top:30px;">© 2026 The Pamposh Electricals</p>
 </footer>
 
 <script>
 let defaultProducts=[
  {name:"LED Panel Lights",price:1250,img:"https://images.unsplash.com/photo-1581092580497-e0d23cbdf1dc"},
- {name:"MCB & Switches",price:450,img:"https://images.unsplash.com/photo-1616627987854-3d2e6e8b7a02"}
+ {name:"MCB & Switches",price:450,img:"https://images.unsplash.com/photo-1616627987854-3d2e6e8b7a02"},
+ {name:"Electrical Wiring (Per Room)",price:8500,img:"https://images.unsplash.com/photo-1604328698692-f76ea9498e76"},
+ {name:"Fan Installation",price:1200,img:"https://images.unsplash.com/photo-1621905251918-48416bd8575a"}
 ];
 
 let products=JSON.parse(localStorage.getItem("products"))||defaultProducts;
@@ -94,6 +131,14 @@ function updateCart(){
  document.getElementById("cart-total").textContent=total;
 }
 function toggleCart(){document.getElementById("cartPanel").classList.toggle("active")}
+
+function checkoutWhatsApp(){
+ if(cart.length===0) return alert("Cart is empty!");
+ let msg="New Order:%0A",total=0;
+ cart.forEach(i=>{msg+=`${i.name} x${i.qty} = ₹${i.price*i.qty}%0A`;total+=i.price*i.qty});
+ msg+=`Total: ₹${total}`;
+ window.open(`https://wa.me/919419007084?text=${msg}`,'_blank');
+}
 </script>
 
 </body>
