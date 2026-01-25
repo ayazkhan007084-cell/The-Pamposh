@@ -53,19 +53,26 @@ body {
 }
   .brand-intro {
   text-align: center;
-  padding: 40px 15px;
-  background-color: #f8f9fa;
+  padding: 60px 20px;
+  background: linear-gradient(135deg, #000000, #1f1f1f);
+  color: #ffffff;
 }
 
 .brand-intro h1 {
-  font-weight: 700;
+  font-size: 42px;
+  font-weight: 800;
+  letter-spacing: 1px;
+  margin-bottom: 15px;
 }
 
-.brand-intro p {
-  font-size: 18px;
-  color: #555;
+.brand-intro .highlight {
+  font-size: 22px;
+  font-weight: 600;
+  color: #ffc107;
+  margin-bottom: 8px;
 }
-  color: white;
-  text-decoration: none;
-  border-radius: 5px;
+
+.brand-intro .location {
+  font-size: 18px;
+  color: #dddddd;
 }
