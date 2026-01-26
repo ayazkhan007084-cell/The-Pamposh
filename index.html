@@ -141,6 +141,7 @@ function addToCart(id){
   const item=cart.find(i=>i.id===id);
   if(item){item.qty++} else {cart.push({...products.find(p=>p.id===id),qty:1})}
   updateCart();
+  vibrate(100); // vibrate when item added
   const icon=document.querySelector('.cart-icon');
   icon.classList.add('bounce');
   setTimeout(()=>icon.classList.remove('bounce'),300);
@@ -173,6 +174,7 @@ function toggleCart(){
 
 function checkout(){
   if(cart.length===0){alert("Cart is empty");return;}
+  vibrate([200,100,200]); // vibration pattern on checkout
   const name=prompt("Enter your name:");
   const phone=prompt("Enter your phone:");
   const address=prompt("Enter delivery address:");
@@ -190,6 +192,11 @@ function checkout(){
 
 renderProducts();
 </script>
+  header{
+  background: var(--dark);
+  color: white;
+  padding: 15px;
+}
 
 </body>
 </html>
