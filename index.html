@@ -1,202 +1,187 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-<meta charset="UTF-8" />
-<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-<title>The Pamposh Electricals | Srinagar Electrical Store</title>
-<meta name="description" content="Buy electrical goods in Srinagar. LED lights, wiring, rewiring services and professional electrical contracting in Kashmir."/>
-<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css"/>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Pamposh Electricals Store</title>
 <style>
-:root{
-  --yellow:#FFD400;
-  --dark:#2b2b2b;
-  --light:#ffffff;
-}
-body{margin:0;font-family:Arial,Helvetica,sans-serif;background:#f7f7f7;color:#333;}
-header{
-  background: var(--dark);
-  color: white;
-  padding: 15px;
-}
-header h1{margin:0;font-size:20px;color:var(--yellow);}
-nav{display:flex;gap:15px;flex-wrap:wrap;margin-top:8px;}
-nav a{color:white;text-decoration:none;font-size:14px;}
-.container{padding:20px;max-width:1100px;margin:auto;}
-.hero{background:var(--yellow);padding:30px;border-radius:10px;margin-bottom:20px;}
-.products{display:grid;grid-template-columns:repeat(auto-fit,minmax(230px,1fr));gap:15px;}
-.card{background:white;border-radius:10px;padding:15px;box-shadow:0 2px 5px rgba(0,0,0,0.1);}
-.card img{width:100%;height:150px;object-fit:cover;border-radius:8px;}
-button{background:var(--dark);color:white;border:none;padding:8px 12px;border-radius:5px;cursor:pointer;}
-button:hover{opacity:0.9}
-.cart-icon{position:fixed;right:20px;bottom:20px;background:var(--yellow);color:black;padding:12px;border-radius:50%;font-weight:bold;box-shadow:0 3px 8px rgba(0,0,0,0.2);}
-.cart-count{font-size:12px;background:red;color:white;border-radius:50%;padding:2px 6px;position:absolute;top:-6px;right:-6px;}
-.cart-panel{position:fixed;right:-400px;top:0;width:350px;height:100%;background:white;box-shadow:-3px 0 8px rgba(0,0,0,0.2);transition:0.3s;padding:15px;overflow-y:auto;z-index:2000;}
-.cart-panel.open{right:0;}
-footer{background:var(--dark);color:white;padding:20px;margin-top:30px;}
-footer a{color:var(--yellow);text-decoration:none;}
-input, textarea{width:100%;padding:8px;margin:5px 0 10px;border-radius:5px;border:1px solid #ccc;}
-.section-title{border-left:5px solid var(--yellow);padding-left:10px;margin-top:40px;}
-@media(max-width:600px){
-  nav{flex-direction:column;}
-}
-.bounce{animation:bounce 0.3s;}
-@keyframes bounce{0%{transform:scale(1)}50%{transform:scale(1.3)}100%{transform:scale(1)}}
+body{margin:0;font-family:Arial,Helvetica,sans-serif;background:#f2f2f2}
+header{background:#131921;color:#fff;padding:10px 15px;display:flex;align-items:center;gap:15px;flex-wrap:wrap}
+.logo{font-size:20px;font-weight:bold}
+.search{flex:1;display:flex}
+.search input{flex:1;padding:8px;border:none;border-radius:4px 0 0 4px}
+.search button{padding:8px 12px;border:none;background:#febd69;border-radius:0 4px 4px 0;cursor:pointer}
+.cart{font-weight:bold;cursor:pointer}
+.login-btn{background:#febd69;border:none;padding:6px 10px;border-radius:4px;cursor:pointer}
+nav{background:#232f3e;color:#fff;padding:8px 15px;font-size:14px}
+.container{padding:15px}
+.products{display:grid;grid-template-columns:repeat(auto-fit,minmax(180px,1fr));gap:15px}
+.card{background:#fff;padding:10px;border-radius:6px;box-shadow:0 2px 5px rgba(0,0,0,0.1);text-align:center}
+.card img{width:100%;height:120px;object-fit:cover}
+.price{color:#b12704;font-weight:bold;margin:6px 0}
+button{background:#ffd814;border:1px solid #fcd200;padding:6px 10px;border-radius:4px;cursor:pointer}
+#cartBox{position:fixed;right:10px;top:70px;background:#fff;padding:10px;border-radius:6px;box-shadow:0 2px 10px rgba(0,0,0,0.2);width:280px;display:none;max-height:70vh;overflow:auto}
+.cart-item{border-bottom:1px solid #ddd;padding:5px 0;font-size:14px}
+.qty-btn{padding:2px 6px;margin:0 3px}
+.remove-btn{color:red;cursor:pointer;font-size:12px}
+.checkout{background:#25D366;color:#fff;width:100%;margin-top:10px}
+.close-cart{float:right;cursor:pointer;font-weight:bold;color:red}
+#loginBox{position:fixed;top:30%;left:50%;transform:translate(-50%,-50%);background:#fff;padding:20px;border-radius:6px;box-shadow:0 2px 10px rgba(0,0,0,0.3);display:none;width:250px}
+footer{background:#131921;color:#fff;text-align:center;padding:15px;margin-top:20px;font-size:14px}
 </style>
 </head>
 <body>
 
 <header>
-  <h1>The Pamposh Electricals</h1>
-  <div style="font-size:12px;">We sell all kinds of electrical goods and provide professional electrical contracting services.</div>
-  <nav>
-    <a href="#home">Home</a>
-    <a href="#shop">Shop</a>
-    <a href="#services">Services</a>
-    <a href="#about">About Us</a>
-    <a href="#contact">Contact</a>
-  </nav>
+<div class="logo">⚡ Pamposh Electricals</div>
+
+<div class="search">
+<input type="text" id="searchInput" placeholder="Search electrical products...">
+<button onclick="searchProducts()">Search</button>
+</div>
+
+<button class="login-btn" onclick="toggleLogin()">Login</button>
+<div class="cart" onclick="toggleCart()">🛒 Cart (<span id="cartCount">0</span>)</div>
 </header>
 
-<div class="container" id="home">
-  <div class="hero">
-    <h2>A-Class Electrical Contractor of Jammu & Kashmir</h2>
-    <p>Trusted electrical store and contractor in Srinagar for homes, shops and government projects.</p>
-  </div>
+<nav>Serving J&K | Call: 9419007084 | Email: thepamposhelectricals@gmail.com</nav>
 
-  <h2 id="shop" class="section-title">🛒 Our Products</h2>
-  <div class="products" id="productList"></div>
-
-  <h2 id="services" class="section-title">🛠 Our Services</h2>
-  <ul>
-    <li>House Rewiring</li>
-    <li>Electrical Fault Repair</li>
-    <li>Installation Services</li>
-    <li>Government & Private Electrical Contract Work</li>
-  </ul>
-
-  <h2 id="about" class="section-title">🏪 About Us</h2>
-  <p>The Pamposh Electricals is a leading electrical goods store located at Red Cross Road, Lal Chowk, Srinagar. We provide quality products and expert electrical contracting services.</p>
-
-  <h2 id="contact" class="section-title">📍 Contact Us</h2>
-  <p><b>Phone:</b> <a href="tel:9419007084">9419007084</a></p>
-  <p><b>Email:</b> <a href="mailto:thepamposhelectricals@gmail.com">thepamposhelectricals@gmail.com</a></p>
-  <p><b>Address:</b> Red Cross Road, Lal Chowk, Srinagar, Kashmir – 190015</p>
-  <a href="https://www.google.com/maps/search/?api=1&query=3RF6%2BC4%20Srinagar" target="_blank">
-    <button>Get Directions</button>
-  </a>
-  <iframe src="https://www.google.com/maps?q=3RF6%2BC4%20Srinagar&output=embed" width="100%" height="250" style="border:0;margin-top:10px;border-radius:8px;"></iframe>
+<div class="container">
+<div class="products" id="productList"></div>
 </div>
 
-<div class="cart-icon" onclick="toggleCart()">
-  🛒 <span class="cart-count" id="cartCount">0</span>
+<!-- CART -->
+<div id="cartBox">
+<span class="close-cart" onclick="toggleCart()">✖</span>
+<h3>Your Cart</h3>
+<div id="cartItems"></div>
+<h4 id="cartTotal"></h4>
+<button class="checkout" onclick="checkoutWhatsApp()">Checkout on WhatsApp</button>
 </div>
 
-<div class="cart-panel" id="cartPanel">
-  <h3>Your Cart</h3>
-  <div id="cartItems"></div>
-  <h4>Total: ₹<span id="cartTotal">0</span></h4>
-  <button onclick="checkout()">Checkout via WhatsApp</button>
-  <p style="font-size:12px;margin-top:10px;">UPI: aban007084@gmail.com<br>Cash on Delivery Available</p>
+<!-- LOGIN BOX -->
+<div id="loginBox">
+<h3>Customer Login</h3>
+<input type="text" placeholder="Enter Name" id="username" style="width:100%;padding:6px;margin:6px 0">
+<button onclick="loginUser()" style="width:100%">Login</button>
 </div>
 
 <footer>
-  <p><b>The Pamposh Electricals</b></p>
-  <p>Red Cross Road, Lal Chowk, Srinagar – 190015</p>
-  <p>
-    <a href="tel:9419007084"><i class="fa fa-phone"></i> Call</a> |
-    <a href="https://wa.me/919419007084"><i class="fab fa-whatsapp"></i> WhatsApp</a> |
-    <a href="mailto:thepamposhelectricals@gmail.com"><i class="fa fa-envelope"></i> Email</a>
-  </p>
-  <p>
-    <a href="https://instagram.com/thepamposhelectricals"><i class="fab fa-instagram"></i></a>
-    <a href="https://facebook.com/ayaz.khan.15887"><i class="fab fa-facebook"></i></a>
-  </p>
+📍 Red Cross Road, Lal Chowk, J&K <br>
+© 2026 The Pamposh Electricals
 </footer>
 
 <script>
 const products = [
-  {id:1,name:"House Rewiring Service",price:9500,img:"https://images.unsplash.com/photo-1581092334651-ddf26d9a09d0"},
-  {id:2,name:"LED Strip Lights",price:3000,img:"https://images.unsplash.com/photo-1582719478250-c89cae4dc85b"},
-  {id:3,name:"9W LED Bulb",price:80,img:"https://images.unsplash.com/photo-1606813907291-d86efa9b94db"},
-  {id:4,name:"Extension Board",price:800,img:"https://images.unsplash.com/photo-1586864387789-628af9feed72"},
-  {id:5,name:"Copper Wire (per metre)",price:2500,img:"https://images.unsplash.com/photo-1581093588401-22c9c9f7b7f6"}
+["LED Bulb 9W",120],["LED Bulb 12W",150],["LED Tube Light",350],["LED Panel Light",450],
+["Ceiling Light",900],["Outdoor Flood Light",1200],["Street Light LED",2500],["Extension Board 4 Socket",300],
+["Extension Board 6 Socket",450],["Electrical Wire 1mm",900],["Electrical Wire 1.5mm",1200],
+["Electrical Wire 2.5mm",1800],["Electrical Wire 4mm",2500],["Electrical Tape",20],
+["Switch 1 Way",80],["Switch 2 Way",120],["Fan Regulator",350],["Plug Top 2 Pin",40],
+["Plug Top 3 Pin",60],["Modular Switch Plate",150],["MCB 6A",250],["MCB 16A",280],
+["MCB 32A",350],["Distribution Board",1800],["Ceiling Fan",2200],["Exhaust Fan",1400],
+["Table Fan",1600],["Wall Fan",1800],["Electric Iron",950],["Room Heater",2200],
+["Water Heater Rod",450],["Geyser 15L",6500],["Geyser 25L",8200],["Voltage Stabilizer",3000],
+["Inverter 800VA",7200],["Inverter Battery",10500],["UPS",3500],["Door Bell",250],
+["Digital Multimeter",650],["Tester Screwdriver",40],["Drill Machine",3200],["Angle Grinder",2800],
+["Cable Ties Pack",100],["PVC Pipe",180],["PVC Bend",25],["PVC Junction Box",60],
+["Switch Box Metal",120],["Switch Box Plastic",70],["LED Strip Light",550],["LED Driver",220],
+["Motion Sensor Light",900],["Smoke Detector",1500],["Fire Alarm Bell",1100],["Emergency Light",750],
+["Battery Charger",1200],["Solar Panel 100W",5200],["Solar Charge Controller",1800],
+["Solar Street Light",7800],["Copper Cable Lug",15],["Earthing Rod",900],["Cable Clip Pack",60],
+["Insulation Gloves",350],["Safety Helmet",450],["Rubber Mat",1200],["Wire Cutter",220],
+["Pliers",180],["Spanner Set",650],["Hammer",200],["Measuring Tape",150],
+["LED Downlight",300],["LED High Bay Light",3200],["Industrial Plug",450],["Industrial Socket",480],
+["Digital Timer Switch",950],["Fan Capacitor",90],["Starter 40W",60],["Starter 65W",70],
+["Choke 40W",140],["Choke 65W",160],["LED Street Driver",650],["Switch Dimmer",320],
+["WiFi Smart Plug",950],["Smart Bulb",850],["CCTV Camera",1800],["CCTV DVR",4500],
+["HDMI Cable",180],["Speaker Wire",220],["Door Sensor Alarm",1200],["Water Pump 0.5HP",4800],
+["Water Pump 1HP",6500],["Submersible Pump",8200],["Float Switch",650],["Power Strip Surge",550],
+["Circuit Tester Pen",60],["LED Torch",220],["Rechargeable Torch",450],["Digital Clamp Meter",1800]
 ];
 
-const cart = [];
+const productList=document.getElementById("productList");
+products.forEach((p,i)=>{
+let img=`https://source.unsplash.com/300x200/?${encodeURIComponent(p[0])}`;
+let card=document.createElement("div");
+card.className="card";
+card.innerHTML=`<img src="${img}">
+<h4>${p[0]}</h4>
+<div class="price">₹${p[1]}</div>
+<button onclick="addToCart(${i})">Add to Cart</button>`;
+productList.appendChild(card);
+});
 
-function renderProducts(){
-  const list=document.getElementById("productList");
-  products.forEach(p=>{
-    list.innerHTML+=`
-      <div class="card">
-        <img src="${p.img}" alt="${p.name}">
-        <h4>${p.name}</h4>
-        <p>₹${p.price}</p>
-        <button onclick="addToCart(${p.id})">Add to Cart</button>
-      </div>`;
-  });
+let cart={};
+
+function addToCart(i){
+let name=products[i][0];
+let price=products[i][1];
+if(cart[name]) cart[name].qty++;
+else cart[name]={price:price,qty:1};
+renderCart();
 }
 
-function addToCart(id){
-  const item=cart.find(i=>i.id===id);
-  if(item){item.qty++} else {cart.push({...products.find(p=>p.id===id),qty:1})}
-  updateCart();
-  vibrate(100); // vibrate when item added
-  const icon=document.querySelector('.cart-icon');
-  icon.classList.add('bounce');
-  setTimeout(()=>icon.classList.remove('bounce'),300);
+function renderCart(){
+let box=document.getElementById("cartItems");
+box.innerHTML="";
+let total=0,count=0;
+for(let item in cart){
+let data=cart[item];
+total+=data.price*data.qty;
+count+=data.qty;
+box.innerHTML+=`<div class="cart-item">
+${item}<br>₹${data.price} x ${data.qty}
+<button class="qty-btn" onclick="changeQty('${item}',1)">+</button>
+<button class="qty-btn" onclick="changeQty('${item}',-1)">-</button>
+<span class="remove-btn" onclick="removeItem('${item}')">Remove</span>
+</div>`;
+}
+document.getElementById("cartTotal").innerText="Total: ₹"+total;
+document.getElementById("cartCount").innerText=count;
 }
 
-function updateCart(){
-  const container=document.getElementById("cartItems");
-  container.innerHTML="";
-  let total=0,count=0;
-  cart.forEach(item=>{
-    total+=item.price*item.qty;
-    count+=item.qty;
-    container.innerHTML+=`
-      <p>${item.name} x ${item.qty} 
-      <button onclick="removeItem(${item.id})">X</button></p>`;
-  });
-  document.getElementById("cartTotal").innerText=total;
-  document.getElementById("cartCount").innerText=count;
+function changeQty(name,delta){
+cart[name].qty+=delta;
+if(cart[name].qty<=0) delete cart[name];
+renderCart();
 }
 
-function removeItem(id){
-  const index=cart.findIndex(i=>i.id===id);
-  if(index>-1){cart.splice(index,1)}
-  updateCart();
+function removeItem(name){
+delete cart[name];
+renderCart();
 }
 
 function toggleCart(){
-  document.getElementById("cartPanel").classList.toggle("open");
+let box=document.getElementById("cartBox");
+box.style.display=box.style.display==="none"?"block":"none";
 }
 
-function checkout(){
-  if(cart.length===0){alert("Cart is empty");return;}
-  vibrate([200,100,200]); // vibration pattern on checkout
-  const name=prompt("Enter your name:");
-  const phone=prompt("Enter your phone:");
-  const address=prompt("Enter delivery address:");
-  let message=`New Order - The Pamposh Electricals\n\nName: ${name}\nPhone: ${phone}\nAddress: ${address}\n\nItems:\n`;
-  let total=0;
-  cart.forEach(item=>{
-    message+=`${item.name} x ${item.qty} = ₹${item.price*item.qty}\n`;
-    total+=item.price*item.qty;
-  });
-  message+=`\nTotal: ₹${total}\nPayment: UPI or COD`;
-  
-  const encoded=encodeURIComponent(message); // FIX for long cart lists
-  window.open(`https://wa.me/919419007084?text=${encoded}`,'_blank');
+function checkoutWhatsApp(){
+let msg="Order from Pamposh Electricals:%0A";
+let total=0;
+for(let item in cart){
+msg+=item+" x "+cart[item].qty+" = ₹"+(cart[item].price*cart[item].qty)+"%0A";
+total+=cart[item].price*cart[item].qty;
+}
+msg+="Total: ₹"+total;
+window.open("https://wa.me/919419007084?text="+msg,"_blank");
 }
 
-renderProducts();
+function searchProducts(){
+let term=document.getElementById("searchInput").value.toLowerCase();
+document.querySelectorAll(".card").forEach((c,i)=>{
+c.style.display=products[i][0].toLowerCase().includes(term)?"block":"none";
+});
+}
+
+function toggleLogin(){document.getElementById("loginBox").style.display="block";}
+function loginUser(){
+let name=document.getElementById("username").value;
+alert("Welcome "+name+"!");
+document.getElementById("loginBox").style.display="none";
+}
 </script>
-  header{
-  background: var(--dark);
-  color: white;
-  padding: 15px;
-}
 
 </body>
 </html>
