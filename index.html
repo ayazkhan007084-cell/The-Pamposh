@@ -4,6 +4,7 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Pamposh Electricals Store</title>
+
 <style>
 body{margin:0;font-family:Arial,Helvetica,sans-serif;background:#f2f2f2}
 header{background:#131921;color:#fff;padding:10px 15px;display:flex;align-items:center;gap:15px;flex-wrap:wrap}
@@ -12,21 +13,37 @@ header{background:#131921;color:#fff;padding:10px 15px;display:flex;align-items:
 .search input{flex:1;padding:8px;border:none;border-radius:4px 0 0 4px}
 .search button{padding:8px 12px;border:none;background:#febd69;border-radius:0 4px 4px 0;cursor:pointer}
 .cart{font-weight:bold;cursor:pointer}
-.login-btn{background:#febd69;border:none;padding:6px 10px;border-radius:4px;cursor:pointer}
 nav{background:#232f3e;color:#fff;padding:8px 15px;font-size:14px}
+
+/* HERO IMAGE */
+.hero{
+width:100%;
+height:350px;
+background:url("store.jpg") center/cover no-repeat;
+display:flex;
+align-items:center;
+justify-content:center;
+color:white;
+font-size:32px;
+font-weight:bold;
+text-shadow:2px 2px 6px rgba(0,0,0,0.7);
+}
+
 .container{padding:15px}
 .products{display:grid;grid-template-columns:repeat(auto-fit,minmax(180px,1fr));gap:15px}
 .card{background:#fff;padding:10px;border-radius:6px;box-shadow:0 2px 5px rgba(0,0,0,0.1);text-align:center}
-.card img{width:100%;height:120px;object-fit:cover}
+.card img{width:100%;height:140px;object-fit:cover;border-radius:4px}
 .price{color:#b12704;font-weight:bold;margin:6px 0}
 button{background:#ffd814;border:1px solid #fcd200;padding:6px 10px;border-radius:4px;cursor:pointer}
-#cartBox{position:fixed;right:10px;top:70px;background:#fff;padding:10px;border-radius:6px;box-shadow:0 2px 10px rgba(0,0,0,0.2);width:280px;display:none;max-height:70vh;overflow:auto}
-.cart-item{border-bottom:1px solid #ddd;padding:5px 0;font-size:14px}
+
+#cartBox{position:fixed;right:10px;top:70px;background:#fff;padding:10px;border-radius:6px;box-shadow:0 2px 10px rgba(0,0,0,0.2);width:300px;display:none;max-height:70vh;overflow:auto}
 .qty-btn{padding:2px 6px;margin:0 3px}
 .remove-btn{color:red;cursor:pointer;font-size:12px}
 .checkout{background:#25D366;color:#fff;width:100%;margin-top:10px}
 .close-cart{float:right;cursor:pointer;font-weight:bold;color:red}
-#loginBox{position:fixed;top:30%;left:50%;transform:translate(-50%,-50%);background:#fff;padding:20px;border-radius:6px;box-shadow:0 2px 10px rgba(0,0,0,0.3);display:none;width:250px}
+#customerForm{display:none;margin-top:10px}
+#customerForm input, #customerForm textarea{width:100%;padding:6px;margin:5px 0}
+
 footer{background:#131921;color:#fff;text-align:center;padding:15px;margin-top:20px;font-size:14px}
 </style>
 </head>
@@ -34,17 +51,18 @@ footer{background:#131921;color:#fff;text-align:center;padding:15px;margin-top:2
 
 <header>
 <div class="logo">⚡ Pamposh Electricals</div>
-
 <div class="search">
 <input type="text" id="searchInput" placeholder="Search electrical products...">
 <button onclick="searchProducts()">Search</button>
 </div>
-
-<button class="login-btn" onclick="toggleLogin()">Login</button>
 <div class="cart" onclick="toggleCart()">🛒 Cart (<span id="cartCount">0</span>)</div>
 </header>
 
 <nav>Serving J&K | Call: 9419007084 | Email: thepamposhelectricals@gmail.com</nav>
+
+<div class="hero">
+Welcome to Pamposh Electricals
+</div>
 
 <div class="container">
 <div class="products" id="productList"></div>
@@ -56,14 +74,15 @@ footer{background:#131921;color:#fff;text-align:center;padding:15px;margin-top:2
 <h3>Your Cart</h3>
 <div id="cartItems"></div>
 <h4 id="cartTotal"></h4>
-<button class="checkout" onclick="checkoutWhatsApp()">Checkout on WhatsApp</button>
-</div>
+<button class="checkout" onclick="showCustomerForm()">Proceed to Checkout</button>
 
-<!-- LOGIN BOX -->
-<div id="loginBox">
-<h3>Customer Login</h3>
-<input type="text" placeholder="Enter Name" id="username" style="width:100%;padding:6px;margin:6px 0">
-<button onclick="loginUser()" style="width:100%">Login</button>
+<div id="customerForm">
+<h4>Customer Details</h4>
+<input type="text" id="custName" placeholder="Full Name" required>
+<input type="tel" id="custPhone" placeholder="Phone Number" required>
+<textarea id="custAddress" placeholder="Full Delivery Address" rows="3" required></textarea>
+<button class="checkout" onclick="checkoutWhatsApp()">Send Order via WhatsApp</button>
+</div>
 </div>
 
 <footer>
@@ -73,36 +92,32 @@ footer{background:#131921;color:#fff;text-align:center;padding:15px;margin-top:2
 
 <script>
 const products = [
-["LED Bulb 9W",120],["LED Bulb 12W",150],["LED Tube Light",350],["LED Panel Light",450],
-["Ceiling Light",900],["Outdoor Flood Light",1200],["Street Light LED",2500],["Extension Board 4 Socket",300],
-["Extension Board 6 Socket",450],["Electrical Wire 1mm",900],["Electrical Wire 1.5mm",1200],
-["Electrical Wire 2.5mm",1800],["Electrical Wire 4mm",2500],["Electrical Tape",20],
-["Switch 1 Way",80],["Switch 2 Way",120],["Fan Regulator",350],["Plug Top 2 Pin",40],
-["Plug Top 3 Pin",60],["Modular Switch Plate",150],["MCB 6A",250],["MCB 16A",280],
-["MCB 32A",350],["Distribution Board",1800],["Ceiling Fan",2200],["Exhaust Fan",1400],
-["Table Fan",1600],["Wall Fan",1800],["Electric Iron",950],["Room Heater",2200],
-["Water Heater Rod",450],["Geyser 15L",6500],["Geyser 25L",8200],["Voltage Stabilizer",3000],
-["Inverter 800VA",7200],["Inverter Battery",10500],["UPS",3500],["Door Bell",250],
-["Digital Multimeter",650],["Tester Screwdriver",40],["Drill Machine",3200],["Angle Grinder",2800],
-["Cable Ties Pack",100],["PVC Pipe",180],["PVC Bend",25],["PVC Junction Box",60],
-["Switch Box Metal",120],["Switch Box Plastic",70],["LED Strip Light",550],["LED Driver",220],
-["Motion Sensor Light",900],["Smoke Detector",1500],["Fire Alarm Bell",1100],["Emergency Light",750],
-["Battery Charger",1200],["Solar Panel 100W",5200],["Solar Charge Controller",1800],
-["Solar Street Light",7800],["Copper Cable Lug",15],["Earthing Rod",900],["Cable Clip Pack",60],
-["Insulation Gloves",350],["Safety Helmet",450],["Rubber Mat",1200],["Wire Cutter",220],
-["Pliers",180],["Spanner Set",650],["Hammer",200],["Measuring Tape",150],
-["LED Downlight",300],["LED High Bay Light",3200],["Industrial Plug",450],["Industrial Socket",480],
-["Digital Timer Switch",950],["Fan Capacitor",90],["Starter 40W",60],["Starter 65W",70],
-["Choke 40W",140],["Choke 65W",160],["LED Street Driver",650],["Switch Dimmer",320],
-["WiFi Smart Plug",950],["Smart Bulb",850],["CCTV Camera",1800],["CCTV DVR",4500],
-["HDMI Cable",180],["Speaker Wire",220],["Door Sensor Alarm",1200],["Water Pump 0.5HP",4800],
-["Water Pump 1HP",6500],["Submersible Pump",8200],["Float Switch",650],["Power Strip Surge",550],
-["Circuit Tester Pen",60],["LED Torch",220],["Rechargeable Torch",450],["Digital Clamp Meter",1800]
+["LED Bulb 9W",120,"led bulb"],["LED Tube Light",350,"led tube light"],
+["Ceiling Light",900,"ceiling light"],["Flood Light",1200,"flood light"],
+["Extension Board",450,"extension board"],["Electrical Wire",1800,"electric wire"],
+["Switch",80,"light switch"],["Fan Regulator",350,"fan regulator"],
+["Plug Top",60,"electric plug"],["MCB",280,"circuit breaker"],
+["Distribution Board",1800,"distribution board"],["Ceiling Fan",2200,"ceiling fan"],
+["Exhaust Fan",1400,"exhaust fan"],["Electric Iron",950,"electric iron"],
+["Room Heater",2200,"room heater"],["Geyser",6500,"water heater"],
+["Voltage Stabilizer",3000,"voltage stabilizer"],["Inverter",7200,"power inverter"],
+["Battery",10500,"inverter battery"],["Door Bell",250,"door bell"],
+["Multimeter",650,"digital multimeter"],["Drill Machine",3200,"drill machine"],
+["Angle Grinder",2800,"angle grinder"],["PVC Pipe",180,"pvc pipe"],
+["LED Strip Light",550,"led strip light"],["Motion Sensor",900,"motion sensor light"],
+["Smoke Detector",1500,"smoke detector"],["Emergency Light",750,"emergency light"],
+["Solar Panel",5200,"solar panel"],["Earthing Rod",900,"earthing rod"],
+["Wire Cutter",220,"wire cutter"],["Pliers",180,"pliers tool"],
+["Hammer",200,"hammer tool"],["LED Downlight",300,"led downlight"],
+["Industrial Plug",450,"industrial plug"],["Timer Switch",950,"digital timer switch"],
+["Smart Plug",950,"smart plug"],["Smart Bulb",850,"smart bulb"],
+["CCTV Camera",1800,"cctv camera"],["Water Pump",6500,"water pump"]
 ];
 
 const productList=document.getElementById("productList");
+
 products.forEach((p,i)=>{
-let img=`https://source.unsplash.com/300x200/?${encodeURIComponent(p[0])}`;
+let img=`https://source.unsplash.com/300x200/?${encodeURIComponent(p[2])}`;
 let card=document.createElement("div");
 card.className="card";
 card.innerHTML=`<img src="${img}">
@@ -127,44 +142,36 @@ let box=document.getElementById("cartItems");
 box.innerHTML="";
 let total=0,count=0;
 for(let item in cart){
-let data=cart[item];
-total+=data.price*data.qty;
-count+=data.qty;
-box.innerHTML+=`<div class="cart-item">
-${item}<br>₹${data.price} x ${data.qty}
+let d=cart[item];
+total+=d.price*d.qty;
+count+=d.qty;
+box.innerHTML+=`${item} - ₹${d.price} x ${d.qty}
 <button class="qty-btn" onclick="changeQty('${item}',1)">+</button>
 <button class="qty-btn" onclick="changeQty('${item}',-1)">-</button>
-<span class="remove-btn" onclick="removeItem('${item}')">Remove</span>
-</div>`;
+<span class="remove-btn" onclick="removeItem('${item}')">Remove</span><br>`;
 }
 document.getElementById("cartTotal").innerText="Total: ₹"+total;
 document.getElementById("cartCount").innerText=count;
 }
 
-function changeQty(name,delta){
-cart[name].qty+=delta;
-if(cart[name].qty<=0) delete cart[name];
-renderCart();
-}
-
-function removeItem(name){
-delete cart[name];
-renderCart();
-}
-
-function toggleCart(){
-let box=document.getElementById("cartBox");
-box.style.display=box.style.display==="none"?"block":"none";
-}
+function changeQty(n,d){cart[n].qty+=d;if(cart[n].qty<=0)delete cart[n];renderCart();}
+function removeItem(n){delete cart[n];renderCart();}
+function toggleCart(){let b=document.getElementById("cartBox");b.style.display=b.style.display==="none"?"block":"none";}
+function showCustomerForm(){document.getElementById("customerForm").style.display="block";}
 
 function checkoutWhatsApp(){
-let msg="Order from Pamposh Electricals:%0A";
+let name=document.getElementById("custName").value;
+let phone=document.getElementById("custPhone").value;
+let addr=document.getElementById("custAddress").value;
+if(!name||!phone||!addr){alert("Please fill all details");return;}
+
+let msg=`New Order from Website:%0AName: ${name}%0APhone: ${phone}%0AAddress: ${addr}%0A%0AItems:%0A`;
 let total=0;
 for(let item in cart){
-msg+=item+" x "+cart[item].qty+" = ₹"+(cart[item].price*cart[item].qty)+"%0A";
+msg+=`${item} x ${cart[item].qty} = ₹${cart[item].price*cart[item].qty}%0A`;
 total+=cart[item].price*cart[item].qty;
 }
-msg+="Total: ₹"+total;
+msg+=`Total: ₹${total}`;
 window.open("https://wa.me/919419007084?text="+msg,"_blank");
 }
 
@@ -173,13 +180,6 @@ let term=document.getElementById("searchInput").value.toLowerCase();
 document.querySelectorAll(".card").forEach((c,i)=>{
 c.style.display=products[i][0].toLowerCase().includes(term)?"block":"none";
 });
-}
-
-function toggleLogin(){document.getElementById("loginBox").style.display="block";}
-function loginUser(){
-let name=document.getElementById("username").value;
-alert("Welcome "+name+"!");
-document.getElementById("loginBox").style.display="none";
 }
 </script>
 
