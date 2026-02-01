@@ -8,70 +8,16 @@
 <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
 
 <style>
-body{
-  margin:0;
-  font-family:-apple-system,BlinkMacSystemFont,system-ui;
-  background:#f3f3f3;
-  color:#222;
-}
-header{
-  background:#ffffff;
-  padding:16px;
-  text-align:center;
-  border-bottom:1px solid #ddd;
-}
-header h2{margin:4px 0}
-header small{color:#666}
-
+body{margin:0;font-family:-apple-system,system-ui;background:#f4f4f4}
+header{background:#fff;padding:16px;text-align:center;border-bottom:1px solid #ddd}
 .container{padding:14px}
-
-.card{
-  background:#fff;
-  border-radius:16px;
-  padding:12px;
-  margin-bottom:14px;
-  box-shadow:0 4px 10px rgba(0,0,0,.06);
-}
-.card img{
-  width:100%;
-  height:160px;
-  object-fit:cover;
-  border-radius:12px;
-}
-button{
-  width:100%;
-  padding:12px;
-  border:none;
-  border-radius:12px;
-  background:#111;
-  color:white;
-  font-size:16px;
-  margin-top:8px;
-}
-.checkout-btn{
-  position:fixed;
-  bottom:16px;
-  right:16px;
-  background:#111;
-  color:white;
-  padding:14px 22px;
-  border-radius:30px;
-  font-weight:600;
-}
-input{
-  width:100%;
-  padding:12px;
-  border-radius:10px;
-  border:1px solid #ccc;
-  margin-bottom:10px;
-}
-footer{
-  text-align:center;
-  padding:16px;
-  font-size:14px;
-  color:#666;
-}
-a{color:#111;text-decoration:none}
+.card{background:#fff;border-radius:16px;padding:12px;margin-bottom:14px;box-shadow:0 4px 12px rgba(0,0,0,.06)}
+.card img{width:100%;height:160px;object-fit:cover;border-radius:12px}
+button{width:100%;padding:12px;border:none;border-radius:12px;background:#111;color:#fff;font-size:16px}
+.qty{display:flex;justify-content:center;gap:12px;margin-top:8px}
+.qty button{width:40px}
+.checkout-btn{position:fixed;bottom:16px;right:16px;background:#111;color:#fff;padding:14px 22px;border-radius:30px}
+input{width:100%;padding:12px;border-radius:10px;border:1px solid #ccc;margin-bottom:10px}
 </style>
 </head>
 
@@ -79,133 +25,126 @@ a{color:#111;text-decoration:none}
 
 <header>
   <h2>The Pamposh Electricals</h2>
-  <small>Class A Electrical Contractor | Jammu & Kashmir</small><br>
-  <small>
-    📧 thepamposhelectricals@gmail.com |
-    <a href="https://instagram.com/thepamposhelectricals" target="_blank">Instagram</a>
-  </small>
+  <small>Class A Electrical Contractor | Jammu & Kashmir</small>
 </header>
 
 <div class="container" id="products"></div>
-
 <div class="checkout-btn" onclick="openCheckout()">Checkout 🛒</div>
 
-<!-- CHECKOUT -->
-<div id="checkoutBox" style="display:none" class="container">
+<div id="checkout" style="display:none" class="container">
   <div class="card">
     <h3>Checkout</h3>
-    <input id="cname" placeholder="Full Name">
-    <input id="cphone" placeholder="Mobile Number">
-    <input id="caddress" placeholder="Address">
+    <input id="name" placeholder="Full Name">
+    <input id="phone" placeholder="Mobile Number">
+    <input id="address" placeholder="Address">
+    <div id="summary"></div>
+    <button onclick="generateQR()">Generate UPI QR</button>
 
-    <button onclick="showUPI()">Pay via UPI</button>
-
-    <div id="upiBox" style="display:none;text-align:center;margin-top:10px">
-      <p><b>Scan & Pay</b></p>
-      <img id="upiImg" style="width:220px">
-      <p>UPI ID: <b>aban007084@okhdfcbank</b></p>
-      <button onclick="confirmPaid()">I Have Paid</button>
+    <div id="upiBox" style="display:none;text-align:center">
+      <img id="qr" style="width:220px">
+      <p><b>Total (incl. GST): ₹<span id="amt"></span></b></p>
+      <button onclick="completeOrder()">I Have Paid</button>
     </div>
   </div>
 </div>
-
-<footer>© The Pamposh Electricals</footer>
 
 <script>
 const products=[
 {name:"Bajaj Ceiling Fan 1200mm",price:2899,img:"https://images.unsplash.com/photo-1581091870627-3c79b1a8f1b1"},
 {name:"Anchor Roma Modular Switch",price:149,img:"https://images.unsplash.com/photo-1581093588401-22a8f0d1c07a"},
 {name:"Havells LED Panel Light 24W",price:799,img:"https://images.unsplash.com/photo-1509395176047-4a66953fd231"},
-{name:"Syska LED Bulb 12W",price:179,img:"https://images.unsplash.com/photo-1519710164239-da123dc03ef4"},
-{name:"Polycab Copper Wire 1.5 sqmm",price:3299,img:"https://images.unsplash.com/photo-1581090700227-1e37b190418e"},
-{name:"Havells Flood Light 50W",price:2199,img:"https://images.unsplash.com/photo-1603791440384-56cd371ee9a7"}
+{name:"Polycab Copper Wire 1.5 sqmm",price:3299,img:"https://images.unsplash.com/photo-1581090700227-1e37b190418e"}
 ];
 
-let cart=[];
+let cart={};
 const productsDiv=document.getElementById("products");
 
-products.forEach(p=>{
+products.forEach((p,i)=>{
   productsDiv.innerHTML+=`
   <div class="card">
     <img src="${p.img}">
     <h4>${p.name}</h4>
     <b>₹${p.price}</b>
-    <button onclick="addToCart('${p.name}',${p.price})">Add to Cart</button>
+    <div id="ctrl${i}">
+      <button onclick="add(${i})">Add to Cart</button>
+    </div>
   </div>`;
 });
 
-function addToCart(name,price){
-  cart.push({name,price});
-  alert("Added to cart");
+function add(i){cart[i]=1;render(i)}
+function inc(i){cart[i]++;render(i)}
+function dec(i){cart[i]--;cart[i]<=0?reset(i):render(i)}
+
+function render(i){
+  document.getElementById("ctrl"+i).innerHTML=
+  `<div class="qty">
+    <button onclick="dec(${i})">−</button>
+    <b>${cart[i]}</b>
+    <button onclick="inc(${i})">+</button>
+  </div>`;
+}
+
+function reset(i){
+  delete cart[i];
+  document.getElementById("ctrl"+i).innerHTML=
+  `<button onclick="add(${i})">Add to Cart</button>`;
 }
 
 function openCheckout(){
-  if(cart.length===0){alert("Cart is empty");return;}
-  document.getElementById("checkoutBox").style.display="block";
-  window.scrollTo(0,document.body.scrollHeight);
+  if(Object.keys(cart).length===0){alert("Cart empty");return;}
+  document.getElementById("checkout").style.display="block";
+  updateSummary();
 }
 
-function showUPI(){
-  const n=cname.value,p=cphone.value,a=caddress.value;
-  if(!n||!p||!a){alert("Fill all details");return;}
-  document.getElementById("upiBox").style.display="block";
-  document.getElementById("upiImg").src=
-  "https://api.qrserver.com/v1/create-qr-code/?size=250x250&data=upi://pay?pa=aban007084@okhdfcbank&pn=The%20Pamposh%20Electricals";
+function updateSummary(){
+  let sub=0,html="";
+  for(let i in cart){
+    sub+=products[i].price*cart[i];
+    html+=`${products[i].name} × ${cart[i]}<br>`;
+  }
+  let gst=sub*0.18;
+  document.getElementById("summary").innerHTML=
+  `${html}<hr>Subtotal: ₹${sub}<br>GST: ₹${gst.toFixed(2)}<br><b>Total: ₹${(sub+gst).toFixed(2)}</b>`;
 }
 
-function confirmPaid(){
+function generateQR(){
+  if(!name.value||!phone.value||!address.value){alert("Fill details");return;}
+  let sub=0;
+  for(let i in cart) sub+=products[i].price*cart[i];
+  let total=(sub*1.18).toFixed(2);
+  amt.innerText=total;
+  upiBox.style.display="block";
+  qr.src=`https://api.qrserver.com/v1/create-qr-code/?size=250x250&data=upi://pay?pa=aban007084@okhdfcbank&pn=The%20Pamposh%20Electricals&am=${total}&cu=INR`;
+}
+
+function completeOrder(){
   generateInvoice();
-  sendWhatsApp();
+  let msg=`🧾 *Paid Order – The Pamposh Electricals*%0A
+Customer: ${name.value}%0A
+Phone: ${phone.value}%0A
+Address: ${address.value}%0A
+GST Invoice has been generated & downloaded.%0A
+Please attach invoice PDF.`;
+
+  window.open(`https://wa.me/919419007084?text=${msg}`);
 }
 
 function generateInvoice(){
-  const { jsPDF } = window.jspdf;
-  const pdf = new jsPDF();
-  let total=0,y=80;
-
-  pdf.setFontSize(14);
-  pdf.text("TAX INVOICE",80,15);
-  pdf.setFontSize(11);
-
+  const {jsPDF}=window.jspdf;
+  const pdf=new jsPDF();
+  let y=60,sub=0;
+  pdf.text("GST INVOICE",80,15);
   pdf.text("The Pamposh Electricals",14,30);
-  pdf.text("Class A Electrical Contractor | J&K",14,36);
-  pdf.text("thepamposhelectricals@gmail.com",14,42);
-
-  pdf.text(`Customer: ${cname.value}`,14,55);
-  pdf.text(`Phone: ${cphone.value}`,14,61);
-  pdf.text(`Address: ${caddress.value}`,14,67);
-
-  cart.forEach((i,idx)=>{
-    pdf.text(`${idx+1}. ${i.name} - ₹${i.price}`,14,y);
-    total+=i.price;
+  pdf.text(`Customer: ${name.value}`,14,40);
+  for(let i in cart){
+    let t=products[i].price*cart[i];
+    sub+=t;
+    pdf.text(`${products[i].name} × ${cart[i]} – ₹${t}`,14,y);
     y+=7;
-  });
-
-  const gst=(total*0.18).toFixed(2);
-  pdf.text(`Subtotal: ₹${total}`,14,y+10);
-  pdf.text(`GST (18%): ₹${gst}`,14,y+16);
-  pdf.text(`Total: ₹${(+total + +gst).toFixed(2)}`,14,y+22);
-
+  }
+  let gst=sub*0.18;
+  pdf.text(`Total (incl GST): ₹${(sub+gst).toFixed(2)}`,14,y+10);
   pdf.save("Pamposh_Electricals_GST_Invoice.pdf");
-}
-
-function sendWhatsApp(){
-  let total=0,items="";
-  cart.forEach(i=>{
-    total+=i.price;
-    items+=`• ${i.name} – ₹${i.price}%0A`;
-  });
-
-  const msg=`🧾 *UPI Paid Order – The Pamposh Electricals*%0A
-👤 ${cname.value}%0A
-📞 ${cphone.value}%0A
-🏠 ${caddress.value}%0A
-----------------%0A
-${items}
-----------------%0A
-💰 Amount Paid: ₹${total}`;
-
-  window.open(`https://wa.me/919419007084?text=${msg}`);
 }
 </script>
 
