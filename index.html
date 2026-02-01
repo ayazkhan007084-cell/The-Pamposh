@@ -5,146 +5,148 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>The Pamposh Electricals</title>
 
-<script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
-
 <style>
-body{margin:0;font-family:-apple-system,system-ui;background:#f4f4f4}
+body{margin:0;font-family:-apple-system,system-ui;background:#f5f5f5}
 header{background:#fff;padding:16px;text-align:center;border-bottom:1px solid #ddd}
 .container{padding:14px}
-.card{background:#fff;border-radius:16px;padding:12px;margin-bottom:14px;box-shadow:0 4px 12px rgba(0,0,0,.06)}
+.card{background:#fff;border-radius:16px;padding:12px;margin-bottom:14px;
+box-shadow:0 6px 16px rgba(0,0,0,.06);animation:fade .3s}
 .card img{width:100%;height:160px;object-fit:cover;border-radius:12px}
 button{width:100%;padding:12px;border:none;border-radius:12px;background:#111;color:#fff;font-size:16px}
-.qty{display:flex;justify-content:center;gap:12px;margin-top:8px}
-.qty button{width:40px}
-.checkout-btn{position:fixed;bottom:16px;right:16px;background:#111;color:#fff;padding:14px 22px;border-radius:30px}
-input{width:100%;padding:12px;border-radius:10px;border:1px solid #ccc;margin-bottom:10px}
+.qty{display:flex;justify-content:center;gap:14px;margin-top:10px}
+.qty button{width:44px;font-size:20px}
+.checkout-btn{position:fixed;bottom:18px;right:18px;
+background:#111;color:#fff;padding:14px 24px;border-radius:30px;font-size:16px}
+@keyframes fade{from{opacity:.6;transform:scale(.97)}to{opacity:1}}
 </style>
 </head>
 
 <body>
 
 <header>
-  <h2>The Pamposh Electricals</h2>
-  <small>Class A Electrical Contractor | Jammu & Kashmir</small>
+<h2>The Pamposh Electricals</h2>
+<small>Class A Electrical Contractor | Jammu & Kashmir</small><br>
+<small>
+<a href="https://instagram.com/thepamposhelectricals" target="_blank">
+Instagram: @thepamposhelectricals
+</a>
+</small>
 </header>
 
 <div class="container" id="products"></div>
 <div class="checkout-btn" onclick="openCheckout()">Checkout 🛒</div>
 
-<div id="checkout" style="display:none" class="container">
-  <div class="card">
-    <h3>Checkout</h3>
-    <input id="name" placeholder="Full Name">
-    <input id="phone" placeholder="Mobile Number">
-    <input id="address" placeholder="Address">
-    <div id="summary"></div>
-    <button onclick="generateQR()">Generate UPI QR</button>
-
-    <div id="upiBox" style="display:none;text-align:center">
-      <img id="qr" style="width:220px">
-      <p><b>Total (incl. GST): ₹<span id="amt"></span></b></p>
-      <button onclick="completeOrder()">I Have Paid</button>
-    </div>
-  </div>
-</div>
-
 <script>
 const products=[
-{name:"Bajaj Ceiling Fan 1200mm",price:2899,img:"https://images.unsplash.com/photo-1581091870627-3c79b1a8f1b1"},
-{name:"Anchor Roma Modular Switch",price:149,img:"https://images.unsplash.com/photo-1581093588401-22a8f0d1c07a"},
+{name:"Bajaj Ceiling Fan 1200mm",price:2899,img:"https://images.unsplash.com/photo-1581090700227-1e37b190418e"},
 {name:"Havells LED Panel Light 24W",price:799,img:"https://images.unsplash.com/photo-1509395176047-4a66953fd231"},
-{name:"Polycab Copper Wire 1.5 sqmm",price:3299,img:"https://images.unsplash.com/photo-1581090700227-1e37b190418e"}
+{name:"Anchor Roma Modular Switch",price:149,img:"https://images.unsplash.com/photo-1581093588401-22a8f0d1c07a"},
+{name:"Polycab Copper Wire 1.5 sqmm",price:3299,img:"https://images.unsplash.com/photo-1581091870627-3c79b1a8f1b1"}
 ];
 
 let cart={};
-const productsDiv=document.getElementById("products");
+const box=document.getElementById("products");
 
 products.forEach((p,i)=>{
-  productsDiv.innerHTML+=`
-  <div class="card">
-    <img src="${p.img}">
-    <h4>${p.name}</h4>
-    <b>₹${p.price}</b>
-    <div id="ctrl${i}">
-      <button onclick="add(${i})">Add to Cart</button>
-    </div>
-  </div>`;
+box.innerHTML+=`
+<div class="card">
+<img src="${p.img}">
+<h4>${p.name}</h4>
+<b>₹${p.price}</b>
+<div id="ctrl${i}">
+<button onclick="add(${i})">Add to Cart</button>
+</div>
+</div>`;
 });
 
 function add(i){cart[i]=1;render(i)}
 function inc(i){cart[i]++;render(i)}
-function dec(i){cart[i]--;cart[i]<=0?reset(i):render(i)}
-
-function render(i){
-  document.getElementById("ctrl"+i).innerHTML=
-  `<div class="qty">
-    <button onclick="dec(${i})">−</button>
-    <b>${cart[i]}</b>
-    <button onclick="inc(${i})">+</button>
-  </div>`;
+function dec(i){
+cart[i]--;
+if(cart[i]<=0){delete cart[i];reset(i)}
+else render(i);
 }
-
+function render(i){
+document.getElementById("ctrl"+i).innerHTML=
+`<div class="qty">
+<button onclick="dec(${i})">−</button>
+<b>${cart[i]}</b>
+<button onclick="inc(${i})">+</button>
+</div>`;
+}
 function reset(i){
-  delete cart[i];
-  document.getElementById("ctrl"+i).innerHTML=
-  `<button onclick="add(${i})">Add to Cart</button>`;
+document.getElementById("ctrl"+i).innerHTML=
+`<button onclick="add(${i})">Add to Cart</button>`;
 }
 
 function openCheckout(){
-  if(Object.keys(cart).length===0){alert("Cart empty");return;}
-  document.getElementById("checkout").style.display="block";
-  updateSummary();
-}
+if(Object.keys(cart).length===0){alert("Cart is empty");return;}
 
-function updateSummary(){
-  let sub=0,html="";
-  for(let i in cart){
-    sub+=products[i].price*cart[i];
-    html+=`${products[i].name} × ${cart[i]}<br>`;
-  }
-  let gst=sub*0.18;
-  document.getElementById("summary").innerHTML=
-  `${html}<hr>Subtotal: ₹${sub}<br>GST: ₹${gst.toFixed(2)}<br><b>Total: ₹${(sub+gst).toFixed(2)}</b>`;
-}
+const w=window.open("", "_blank");
+w.document.write(`
+<!DOCTYPE html>
+<html>
+<head>
+<title>Checkout – The Pamposh Electricals</title>
+<style>
+body{font-family:-apple-system,system-ui;background:#f5f5f5;padding:14px}
+.card{background:#fff;border-radius:16px;padding:14px}
+input,button{width:100%;padding:12px;margin-bottom:10px;border-radius:10px}
+button{background:#111;color:#fff;border:none}
+.close{background:#999}
+</style>
+</head>
+<body>
+
+<div class="card">
+<h3>Checkout</h3>
+
+<input id="name" placeholder="Full Name">
+<input id="phone" placeholder="Mobile Number">
+<input id="address" placeholder="Address">
+
+<div id="summary"></div>
+
+<button onclick="generateQR()">Generate UPI QR</button>
+
+<div id="pay" style="display:none;text-align:center">
+<img id="qr" style="width:220px"><br><br>
+<b>Total (incl GST): ₹<span id="amt"></span></b><br><br>
+<button onclick="paid()">I Have Paid</button>
+<button class="close" onclick="window.close()">Close Checkout</button>
+</div>
+</div>
+
+<script>
+const cart=${JSON.stringify(cart)};
+const products=${JSON.stringify(products)};
 
 function generateQR(){
-  if(!name.value||!phone.value||!address.value){alert("Fill details");return;}
-  let sub=0;
-  for(let i in cart) sub+=products[i].price*cart[i];
-  let total=(sub*1.18).toFixed(2);
-  amt.innerText=total;
-  upiBox.style.display="block";
-  qr.src=`https://api.qrserver.com/v1/create-qr-code/?size=250x250&data=upi://pay?pa=aban007084@okhdfcbank&pn=The%20Pamposh%20Electricals&am=${total}&cu=INR`;
+let n=name.value.trim(),p=phone.value.trim(),a=address.value.trim();
+if(!n||!p||!a){alert("Please fill all details");return;}
+
+let sub=0,txt="";
+for(let i in cart){
+sub+=products[i].price*cart[i];
+txt+=products[i].name+" × "+cart[i]+"<br>";
+}
+let gst=sub*0.18;
+let total=(sub+gst).toFixed(2);
+
+summary.innerHTML=txt+"<hr>Total: ₹"+total;
+amt.innerText=total;
+qr.src="https://api.qrserver.com/v1/create-qr-code/?size=250x250&data=upi://pay?pa=aban007084@okhdfcbank&pn=The%20Pamposh%20Electricals&am="+total+"&cu=INR";
+pay.style.display="block";
 }
 
-function completeOrder(){
-  generateInvoice();
-  let msg=`🧾 *Paid Order – The Pamposh Electricals*%0A
-Customer: ${name.value}%0A
-Phone: ${phone.value}%0A
-Address: ${address.value}%0A
-GST Invoice has been generated & downloaded.%0A
-Please attach invoice PDF.`;
-
-  window.open(`https://wa.me/919419007084?text=${msg}`);
+function paid(){
+window.open("https://wa.me/919419007084?text=Order placed and payment done. Please find GST invoice.","_blank");
 }
+<\/script>
 
-function generateInvoice(){
-  const {jsPDF}=window.jspdf;
-  const pdf=new jsPDF();
-  let y=60,sub=0;
-  pdf.text("GST INVOICE",80,15);
-  pdf.text("The Pamposh Electricals",14,30);
-  pdf.text(`Customer: ${name.value}`,14,40);
-  for(let i in cart){
-    let t=products[i].price*cart[i];
-    sub+=t;
-    pdf.text(`${products[i].name} × ${cart[i]} – ₹${t}`,14,y);
-    y+=7;
-  }
-  let gst=sub*0.18;
-  pdf.text(`Total (incl GST): ₹${(sub+gst).toFixed(2)}`,14,y+10);
-  pdf.save("Pamposh_Electricals_GST_Invoice.pdf");
+</body>
+</html>
+`);
 }
 </script>
 
