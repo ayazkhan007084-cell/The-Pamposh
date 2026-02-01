@@ -5,6 +5,8 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>The Pamposh Electricals</title>
 
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+
 <style>
 body{margin:0;font-family:-apple-system,system-ui;background:#f4f4f4}
 header{background:#fff;padding:16px;text-align:center;border-bottom:1px solid #ddd}
@@ -17,6 +19,7 @@ button{width:100%;padding:12px;border:none;border-radius:12px;background:#111;co
 .qty button{width:44px;font-size:20px}
 .checkout-btn{position:fixed;bottom:18px;right:18px;
 background:#111;color:#fff;padding:14px 24px;border-radius:30px}
+.summary{background:#fff;border-radius:16px;padding:14px;margin-bottom:16px}
 </style>
 </head>
 
@@ -25,14 +28,19 @@ background:#111;color:#fff;padding:14px 24px;border-radius:30px}
 <header>
 <h2>The Pamposh Electricals</h2>
 <small>Class A Electrical Contractor | Jammu & Kashmir</small><br>
-<small>
-<a href="https://instagram.com/thepamposhelectricals" target="_blank">
-@thepamposhelectricals
-</a>
-</small>
+<small><a href="https://instagram.com/thepamposhelectricals" target="_blank">@thepamposhelectricals</a></small>
 </header>
 
-<div class="container" id="products"></div>
+<div class="container">
+
+<div class="summary" id="orderSummary">
+<b>Order Summary</b><br><br>
+<small>No items added</small>
+</div>
+
+<div id="products"></div>
+</div>
+
 <div class="checkout-btn" onclick="openCheckout()">Checkout 🛒</div>
 
 <script>
@@ -58,12 +66,13 @@ box.innerHTML+=`
 </div>`;
 });
 
-function add(i){cart[i]=1;render(i)}
-function inc(i){cart[i]++;render(i)}
+function add(i){cart[i]=1;render(i);updateSummary()}
+function inc(i){cart[i]++;render(i);updateSummary()}
 function dec(i){
 cart[i]--;
 if(cart[i]<=0){delete cart[i];reset(i)}
 else render(i);
+updateSummary();
 }
 function render(i){
 document.getElementById("ctrl"+i).innerHTML=
@@ -78,89 +87,88 @@ document.getElementById("ctrl"+i).innerHTML=
 `<button onclick="add(${i})">Add to Cart</button>`;
 }
 
-function openCheckout(){
+function updateSummary(){
+let div=document.getElementById("orderSummary");
+let sub=0,html="<b>Order Summary</b><br><br>";
+
 if(Object.keys(cart).length===0){
-alert("Cart is empty");
+div.innerHTML=html+"<small>No items added</small>";
 return;
 }
+
+for(let i in cart){
+let line=products[i].price*cart[i];
+sub+=line;
+html+=products[i].name+" × "+cart[i]+" = ₹"+line+"<br>";
+}
+let gst=sub*0.18;
+let total=sub+gst;
+
+html+="<hr>GST (18%): ₹"+gst.toFixed(2);
+html+="<br><b>Total: ₹"+total.toFixed(2)+"</b>";
+
+div.innerHTML=html;
+}
+
+function openCheckout(){
+if(Object.keys(cart).length===0){alert("Cart is empty");return;}
 
 const w=window.open("", "_blank");
 w.document.write(`
 <!DOCTYPE html>
 <html>
 <head>
-<title>Checkout – The Pamposh Electricals</title>
+<title>Checkout</title>
 <style>
 body{font-family:-apple-system,system-ui;background:#f4f4f4;padding:14px}
 .card{background:#fff;border-radius:16px;padding:14px}
 input,button{width:100%;padding:12px;margin-bottom:10px;border-radius:10px}
 button{background:#111;color:#fff;border:none}
-.close{background:#777}
-.bill{background:#fafafa;padding:10px;border-radius:10px;margin-bottom:10px}
 </style>
 </head>
 <body>
 
 <div class="card">
-<h3>Checkout</h3>
+<h3>Customer Details</h3>
 
-<input id="custName" placeholder="Full Name">
-<input id="custPhone" placeholder="Mobile Number">
-<input id="custAddress" placeholder="Address">
+<input id="name" placeholder="Full Name">
+<input id="phone" placeholder="Mobile Number">
+<input id="address" placeholder="Address">
 
-<div id="bill" class="bill"></div>
-
-<button onclick="generateQR()">Generate UPI QR</button>
-
-<div id="payment" style="display:none;text-align:center">
-<img id="qr" style="width:220px"><br><br>
-<b>Total (incl GST): ₹<span id="amount"></span></b><br><br>
-<button onclick="paid()">I Have Paid</button>
-<button class="close" onclick="window.close()">Close Checkout</button>
-</div>
+<button onclick="pay()">Generate QR & Invoice</button>
+<button onclick="window.close()">Close Checkout</button>
 </div>
 
 <script>
+const { jsPDF } = window.jspdf;
 const cart=${JSON.stringify(cart)};
 const products=${JSON.stringify(products)};
 
-function generateQR(){
-const name=document.getElementById("custName").value.trim();
-const phone=document.getElementById("custPhone").value.trim();
-const address=document.getElementById("custAddress").value.trim();
+function pay(){
+const n=name.value.trim(),p=phone.value.trim(),a=address.value.trim();
+if(!n||!p||!a){alert("Fill all details");return;}
 
-if(!name||!phone||!address){
-alert("Please fill all details");
-return;
-}
-
-let subtotal=0;
-let html="<b>Order Summary</b><br><br>";
+let sub=0,txt="Invoice – The Pamposh Electricals\\n\\n";
+txt+="Name: "+n+"\\nPhone: "+p+"\\nAddress: "+a+"\\n\\n";
 
 for(let i in cart){
-let line=products[i].price*cart[i];
-subtotal+=line;
-html+=products[i].name+" × "+cart[i]+" = ₹"+line+"<br>";
+let l=products[i].price*cart[i];
+sub+=l;
+txt+=products[i].name+" x "+cart[i]+" = ₹"+l+"\\n";
 }
+let gst=sub*0.18,total=sub+gst;
+txt+="\\nGST (18%): ₹"+gst.toFixed(2);
+txt+="\\nTotal: ₹"+total.toFixed(2);
 
-let gst=subtotal*0.18;
-let total=(subtotal+gst).toFixed(2);
+const pdf=new jsPDF();
+pdf.text(txt,10,10);
+pdf.save("Pamposh-Electricals-Invoice.pdf");
 
-html+="<hr>GST (18%): ₹"+gst.toFixed(2);
-html+="<br><b>Total: ₹"+total+"</b>";
+const msg=encodeURIComponent(txt);
+window.open("https://wa.me/919419007084?text="+msg,"_blank");
 
-document.getElementById("bill").innerHTML=html;
-document.getElementById("amount").innerText=total;
-
-document.getElementById("qr").src=
-"https://api.qrserver.com/v1/create-qr-code/?size=250x250&data=upi://pay?pa=aban007084@okhdfcbank&pn=The%20Pamposh%20Electricals&am="+total+"&cu=INR";
-
-document.getElementById("payment").style.display="block";
-}
-
-function paid(){
 window.open(
-"https://wa.me/919419007084?text=Order placed & payment done. Please send GST invoice.",
+"https://api.qrserver.com/v1/create-qr-code/?size=250x250&data=upi://pay?pa=aban007084@okhdfcbank&pn=The%20Pamposh%20Electricals&am="+total.toFixed(2)+"&cu=INR",
 "_blank"
 );
 }
