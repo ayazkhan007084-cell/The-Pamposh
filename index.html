@@ -6,18 +6,17 @@
 <title>The Pamposh Electricals</title>
 
 <style>
-body{margin:0;font-family:-apple-system,system-ui;background:#f5f5f5}
+body{margin:0;font-family:-apple-system,system-ui;background:#f4f4f4}
 header{background:#fff;padding:16px;text-align:center;border-bottom:1px solid #ddd}
 .container{padding:14px}
 .card{background:#fff;border-radius:16px;padding:12px;margin-bottom:14px;
-box-shadow:0 6px 16px rgba(0,0,0,.06);animation:fade .3s}
+box-shadow:0 6px 14px rgba(0,0,0,.06)}
 .card img{width:100%;height:160px;object-fit:cover;border-radius:12px}
 button{width:100%;padding:12px;border:none;border-radius:12px;background:#111;color:#fff;font-size:16px}
 .qty{display:flex;justify-content:center;gap:14px;margin-top:10px}
 .qty button{width:44px;font-size:20px}
 .checkout-btn{position:fixed;bottom:18px;right:18px;
-background:#111;color:#fff;padding:14px 24px;border-radius:30px;font-size:16px}
-@keyframes fade{from{opacity:.6;transform:scale(.97)}to{opacity:1}}
+background:#111;color:#fff;padding:14px 24px;border-radius:30px}
 </style>
 </head>
 
@@ -28,7 +27,7 @@ background:#111;color:#fff;padding:14px 24px;border-radius:30px;font-size:16px}
 <small>Class A Electrical Contractor | Jammu & Kashmir</small><br>
 <small>
 <a href="https://instagram.com/thepamposhelectricals" target="_blank">
-Instagram: @thepamposhelectricals
+@thepamposhelectricals
 </a>
 </small>
 </header>
@@ -80,7 +79,10 @@ document.getElementById("ctrl"+i).innerHTML=
 }
 
 function openCheckout(){
-if(Object.keys(cart).length===0){alert("Cart is empty");return;}
+if(Object.keys(cart).length===0){
+alert("Cart is empty");
+return;
+}
 
 const w=window.open("", "_blank");
 w.document.write(`
@@ -89,11 +91,12 @@ w.document.write(`
 <head>
 <title>Checkout – The Pamposh Electricals</title>
 <style>
-body{font-family:-apple-system,system-ui;background:#f5f5f5;padding:14px}
+body{font-family:-apple-system,system-ui;background:#f4f4f4;padding:14px}
 .card{background:#fff;border-radius:16px;padding:14px}
 input,button{width:100%;padding:12px;margin-bottom:10px;border-radius:10px}
 button{background:#111;color:#fff;border:none}
-.close{background:#999}
+.close{background:#777}
+.bill{background:#fafafa;padding:10px;border-radius:10px;margin-bottom:10px}
 </style>
 </head>
 <body>
@@ -101,17 +104,17 @@ button{background:#111;color:#fff;border:none}
 <div class="card">
 <h3>Checkout</h3>
 
-<input id="name" placeholder="Full Name">
-<input id="phone" placeholder="Mobile Number">
-<input id="address" placeholder="Address">
+<input id="custName" placeholder="Full Name">
+<input id="custPhone" placeholder="Mobile Number">
+<input id="custAddress" placeholder="Address">
 
-<div id="summary"></div>
+<div id="bill" class="bill"></div>
 
 <button onclick="generateQR()">Generate UPI QR</button>
 
-<div id="pay" style="display:none;text-align:center">
+<div id="payment" style="display:none;text-align:center">
 <img id="qr" style="width:220px"><br><br>
-<b>Total (incl GST): ₹<span id="amt"></span></b><br><br>
+<b>Total (incl GST): ₹<span id="amount"></span></b><br><br>
 <button onclick="paid()">I Have Paid</button>
 <button class="close" onclick="window.close()">Close Checkout</button>
 </div>
@@ -122,25 +125,44 @@ const cart=${JSON.stringify(cart)};
 const products=${JSON.stringify(products)};
 
 function generateQR(){
-let n=name.value.trim(),p=phone.value.trim(),a=address.value.trim();
-if(!n||!p||!a){alert("Please fill all details");return;}
+const name=document.getElementById("custName").value.trim();
+const phone=document.getElementById("custPhone").value.trim();
+const address=document.getElementById("custAddress").value.trim();
 
-let sub=0,txt="";
-for(let i in cart){
-sub+=products[i].price*cart[i];
-txt+=products[i].name+" × "+cart[i]+"<br>";
+if(!name||!phone||!address){
+alert("Please fill all details");
+return;
 }
-let gst=sub*0.18;
-let total=(sub+gst).toFixed(2);
 
-summary.innerHTML=txt+"<hr>Total: ₹"+total;
-amt.innerText=total;
-qr.src="https://api.qrserver.com/v1/create-qr-code/?size=250x250&data=upi://pay?pa=aban007084@okhdfcbank&pn=The%20Pamposh%20Electricals&am="+total+"&cu=INR";
-pay.style.display="block";
+let subtotal=0;
+let html="<b>Order Summary</b><br><br>";
+
+for(let i in cart){
+let line=products[i].price*cart[i];
+subtotal+=line;
+html+=products[i].name+" × "+cart[i]+" = ₹"+line+"<br>";
+}
+
+let gst=subtotal*0.18;
+let total=(subtotal+gst).toFixed(2);
+
+html+="<hr>GST (18%): ₹"+gst.toFixed(2);
+html+="<br><b>Total: ₹"+total+"</b>";
+
+document.getElementById("bill").innerHTML=html;
+document.getElementById("amount").innerText=total;
+
+document.getElementById("qr").src=
+"https://api.qrserver.com/v1/create-qr-code/?size=250x250&data=upi://pay?pa=aban007084@okhdfcbank&pn=The%20Pamposh%20Electricals&am="+total+"&cu=INR";
+
+document.getElementById("payment").style.display="block";
 }
 
 function paid(){
-window.open("https://wa.me/919419007084?text=Order placed and payment done. Please find GST invoice.","_blank");
+window.open(
+"https://wa.me/919419007084?text=Order placed & payment done. Please send GST invoice.",
+"_blank"
+);
 }
 <\/script>
 
