@@ -4,12 +4,19 @@
 <meta charset="UTF-8">
 <title>THE PAMPOSH ELECTRICALS | A-Class Electrical Contractor J&K</title>
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<meta name="description" content="THE PAMPOSH ELECTRICALS – A-Class Electrical Contractor in Jammu & Kashmir">
 
 <script src="https://cdn.tailwindcss.com"></script>
 <style>
 html{scroll-behavior:smooth}
 .gold{color:#c9a227}
+
+/* FORCE BLACK TEXT IN CHECKOUT INPUTS */
+.checkout-input{
+  color:#000 !important;
+}
+.checkout-input::placeholder{
+  color:#444;
+}
 </style>
 </head>
 
@@ -63,25 +70,11 @@ html{scroll-behavior:smooth}
 <div id="productList" class="grid md:grid-cols-3 gap-6"></div>
 </section>
 
-<!-- ABOUT -->
-<section id="about" class="bg-white py-16">
-<div class="max-w-7xl mx-auto px-6">
-<h3 class="text-3xl font-bold mb-6">About Us</h3>
-<p class="text-lg">
-<strong>THE PAMPOSH ELECTRICALS</strong> is a certified
-<strong>A-Class Electrical Contractor</strong> executing
-government, commercial & residential projects across Jammu & Kashmir
-with strict safety and quality standards.
-</p>
-</div>
-</section>
-
 <!-- CONTACT -->
 <section id="contact" class="max-w-7xl mx-auto px-6 py-16">
 <h3 class="text-3xl font-bold mb-6">Contact</h3>
 <p><strong>WhatsApp / Phone:</strong> +91 9419007084</p>
 <p><strong>Email:</strong> thepamposhelectricals@gmail.com</p>
-<p><strong>Instagram:</strong> @thepamposhelectricals</p>
 </section>
 
 <!-- ADMIN (LOCKED) -->
@@ -90,7 +83,6 @@ with strict safety and quality standards.
 <h3 class="text-3xl font-bold mb-6">Admin Panel</h3>
 
 <form id="adminForm" class="grid gap-3">
-  <input type="hidden" id="prodId">
   <input id="prodName" placeholder="Product Name" class="p-2 border rounded">
   <input id="prodPrice" type="number" placeholder="Price ₹" class="p-2 border rounded">
   <input id="prodWatt" type="number" placeholder="Wattage" class="p-2 border rounded">
@@ -112,61 +104,70 @@ with strict safety and quality standards.
   <div id="cartItems" class="text-sm mb-2"></div>
   <p id="cartTotal" class="font-bold mb-2"></p>
 
-  <input id="custName" placeholder="Your Name" class="p-2 w-full rounded mb-2">
-  <input id="custPhone" placeholder="Phone Number" class="p-2 w-full rounded mb-2">
-  <input id="custAddress" placeholder="Delivery Address" class="p-2 w-full rounded mb-2">
+  <!-- CUSTOMER DETAILS -->
+  <input id="custName" class="checkout-input p-2 w-full rounded mb-2" placeholder="Your Name">
+  <input id="custPhone" class="checkout-input p-2 w-full rounded mb-2" placeholder="Phone Number">
+  <input id="custAddress" class="checkout-input p-2 w-full rounded mb-2" placeholder="Delivery Address">
 
-  <button onclick="checkout()" class="bg-green-500 w-full py-2 rounded">
+  <button onclick="checkout()" class="bg-green-500 w-full py-2 rounded mt-2">
     Checkout on WhatsApp
   </button>
 </div>
 
 <script>
 // ===== ADMIN LOCK =====
-document.querySelector('a[href="#admin"]').onclick = e=>{
+document.querySelector('a[href="#admin"]').onclick=e=>{
   e.preventDefault();
-  if(prompt("Enter Admin Password") === "Khan@123"){
-    document.getElementById("admin").classList.remove("hidden");
-    document.getElementById("admin").scrollIntoView({behavior:"smooth"});
+  if(prompt("Enter Admin Password")==="Khan@123"){
+    admin.classList.remove("hidden");
+    admin.scrollIntoView({behavior:"smooth"});
   } else alert("Access Denied");
 };
 
 // ===== DATA =====
-let products = JSON.parse(localStorage.getItem("products")) || [
-  {id:1,name:"12W LED Surface Batten",price:520,watt:12,hsn:"9405"},
-  {id:2,name:"12W LED Concealed Batten",price:500,watt:12,hsn:"9405"},
-  {id:3,name:"50W Flood Light",price:820,watt:50,hsn:"9405"}
+let products=JSON.parse(localStorage.getItem("products"))||[
+  {id:1,name:"12W LED Surface Batten",price:520,watt:12},
+  {id:2,name:"12W LED Concealed Batten",price:500,watt:12},
+  {id:3,name:"50W Flood Light",price:820,watt:50}
 ];
 localStorage.setItem("products",JSON.stringify(products));
 
-let cart = JSON.parse(localStorage.getItem("cart")) || [];
+let cart=JSON.parse(localStorage.getItem("cart"))||[];
 
-// ===== RENDER PRODUCTS =====
-const productList = document.getElementById("productList");
+// ===== PRODUCTS =====
 function renderProducts(){
   productList.innerHTML="";
-  let s=document.getElementById("search").value.toLowerCase();
-  let w=document.getElementById("wattFilter").value;
+  let s=search.value.toLowerCase(), w=wattFilter.value;
   products.filter(p=>
-    p.name.toLowerCase().includes(s) &&
-    (w=="" || p.watt==w)
+    p.name.toLowerCase().includes(s) && (w==""||p.watt==w)
   ).forEach(p=>{
     productList.innerHTML+=`
     <div class="bg-white p-5 rounded shadow">
       <h4 class="font-semibold">${p.name}</h4>
       <p class="gold font-bold">₹${p.price}</p>
       <button onclick="addToCart(${p.id})"
-      class="mt-2 bg-blue-900 text-white px-4 py-2 rounded">
-      Add to Cart</button>
+        class="mt-2 bg-blue-900 text-white px-4 py-2 rounded">
+        Add to Cart
+      </button>
     </div>`;
   });
 }
 renderProducts();
 
-// ===== CART =====
+// ===== CART LOGIC =====
 function addToCart(id){
+  let item=cart.find(c=>c.id===id);
+  if(item)item.qty++;
+  else cart.push({...products.find(p=>p.id===id),qty:1});
+  saveCart();
+}
+function increase(id){
+  cart.find(c=>c.id===id).qty++;
+  saveCart();
+}
+function decrease(id){
   let i=cart.find(c=>c.id===id);
-  if(i)i.qty++; else cart.push({...products.find(p=>p.id===id),qty:1});
+  if(i.qty>1)i.qty--; else cart=cart.filter(c=>c.id!==id);
   saveCart();
 }
 function saveCart(){
@@ -174,57 +175,45 @@ function saveCart(){
   updateCart();
 }
 function updateCart(){
-  const box=document.getElementById("cartBox");
-  const items=document.getElementById("cartItems");
-  const total=document.getElementById("cartTotal");
-  if(cart.length===0){box.classList.add("hidden");return;}
-  box.classList.remove("hidden");
-  items.innerHTML="";
-  let t=0;
+  if(cart.length===0){cartBox.classList.add("hidden");return;}
+  cartBox.classList.remove("hidden");
+  cartItems.innerHTML="";
+  let total=0;
   cart.forEach(p=>{
-    t+=p.price*p.qty;
-    items.innerHTML+=`
-    <div class="flex justify-between">
-      <span>${p.name} x${p.qty}</span>
-      <button onclick="removeItem(${p.id})">🗑️</button>
+    total+=p.price*p.qty;
+    cartItems.innerHTML+=`
+    <div class="flex justify-between items-center mb-1">
+      <span>${p.name}</span>
+      <div class="flex items-center gap-2">
+        <button onclick="decrease(${p.id})">−</button>
+        <span>${p.qty}</span>
+        <button onclick="increase(${p.id})">+</button>
+      </div>
     </div>`;
   });
-  total.innerText="Total: ₹"+t;
+  cartTotal.innerText="Total: ₹"+total;
 }
-function removeItem(id){
-  cart=cart.filter(c=>c.id!==id);
-  saveCart();
-}
-function closeCart(){document.getElementById("cartBox").classList.add("hidden");}
+function closeCart(){cartBox.classList.add("hidden");}
 
-// ===== WHATSAPP CHECKOUT (100% RELIABLE) =====
+// ===== CHECKOUT =====
 function checkout(){
-  if(cart.length===0) return alert("Cart empty");
-
-  let name=document.getElementById("custName").value.trim();
-  let phone=document.getElementById("custPhone").value.trim();
-  let address=document.getElementById("custAddress").value.trim();
-
-  if(!name || !phone || !address)
-    return alert("Please fill all details");
+  if(cart.length===0)return alert("Cart empty");
+  let n=custName.value.trim(),
+      p=custPhone.value.trim(),
+      a=custAddress.value.trim();
+  if(!n||!p||!a)return alert("Please fill all details");
 
   let msg="Hello THE PAMPOSH ELECTRICALS,%0A%0AI want to place an order:%0A";
   let total=0;
-  cart.forEach(p=>{
-    msg+=`- ${p.name} x${p.qty} – ₹${p.price*p.qty}%0A`;
-    total+=p.price*p.qty;
+  cart.forEach(i=>{
+    msg+=`- ${i.name} x${i.qty} – ₹${i.price*i.qty}%0A`;
+    total+=i.price*i.qty;
   });
-  msg+=`%0ATotal: ₹${total}%0AName: ${name}%0APhone: ${phone}%0AAddress: ${address}`;
-
+  msg+=`%0ATotal: ₹${total}%0AName: ${n}%0APhone: ${p}%0AAddress: ${a}`;
   window.location.href=`https://wa.me/919419007084?text=${msg}`;
 }
 
-// ===== FILTERS =====
-search.oninput=renderProducts;
-wattFilter.onchange=renderProducts;
-
 // ===== ADMIN =====
-const adminList=document.getElementById("adminList");
 function renderAdmin(){
   adminList.innerHTML="";
   products.forEach(p=>{
@@ -254,6 +243,9 @@ adminForm.onsubmit=e=>{
   renderProducts();renderAdmin();
 };
 renderAdmin();
+
+search.oninput=renderProducts;
+wattFilter.onchange=renderProducts;
 </script>
 
 </body>
