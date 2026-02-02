@@ -104,7 +104,7 @@ document.querySelector('a[href="#admin"]').addEventListener('click', function(e)
 });
 </script>
 
-<!-- FLOATING CART -->
+<!-- FLOATING CART WITH CUSTOMER DETAILS FORM -->
 <div id="cartBox" class="fixed bottom-6 right-6 bg-blue-900 text-white p-4 rounded shadow-lg w-72 hidden">
   <div class="flex justify-between mb-2">
     <strong>Order Summary</strong>
@@ -112,10 +112,36 @@ document.querySelector('a[href="#admin"]').addEventListener('click', function(e)
   </div>
   <div id="cartItems" class="text-sm mb-2"></div>
   <p id="cartTotal" class="font-bold mb-2"></p>
+
+  <!-- CUSTOMER INFO FORM -->
+  <input type="text" id="customerName" placeholder="Your Name" class="p-2 w-full rounded mb-2">
+  <input type="text" id="customerPhone" placeholder="Your Phone" class="p-2 w-full rounded mb-2">
+  <input type="text" id="customerAddress" placeholder="Delivery Address" class="p-2 w-full rounded mb-2">
+
   <button onclick="checkout()" class="bg-green-500 w-full py-2 rounded">Checkout on WhatsApp</button>
 </div>
 
 <script>
+function checkout(){
+  if(cart.length===0) return alert("Cart empty!");
+  
+  const name = document.getElementById("customerName").value || "N/A";
+  const phone = document.getElementById("customerPhone").value || "N/A";
+  const address = document.getElementById("customerAddress").value || "N/A";
+
+  let msg = `Hello THE PAMPOSH ELECTRICALS,%0A%0AI want to place an order:%0A`;
+  let total = 0;
+  cart.forEach(p=>{
+    msg += `- ${p.name} x${p.qty} – ₹${(p.price*p.qty).toFixed(2)}%0A`;
+    total += p.price*p.qty;
+  });
+  msg += `%0ATotal Amount: ₹${total.toFixed(2)}%0AName: ${name}%0APhone: ${phone}%0ADelivery Address: ${address}`;
+
+  // Always works because user clicked a button
+  window.open(`https://wa.me/919419007084?text=${msg}`, '_blank');
+}
+</script>
+
 // ======== PRODUCTS DATA ========
 let products = JSON.parse(localStorage.getItem('products')) || [
   {id:1,name:"12W LED Surface Batten",price:520,watt:12,hsn:"9405",image:"https://via.placeholder.com/150"},
