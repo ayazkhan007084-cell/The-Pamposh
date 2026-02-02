@@ -201,20 +201,54 @@ function checkout(){
 // ======== PDF INVOICE ========
 function generateInvoice(){
   if(cart.length===0) return alert("Cart empty!");
+
   const { jsPDF } = window.jspdf;
-  const doc = new jsPDF(); let y=20;
-  doc.setFontSize(14); doc.text("THE PAMPOSH ELECTRICALS",20,y); y+=8;
-  doc.setFontSize(10); doc.text("A-Class Electrical Contractor (J&K)",20,y); y+=10;
-  doc.text(`Invoice Date: ${new Date().toLocaleDateString()}`,20,y); y+=10;
-  let total=0;
-  cart.forEach(p=>{
-    let gst=(p.price*0.18).toFixed(2);
-    let lineTotal=p.price*p.qty + parseFloat(gst)*p.qty; total+=lineTotal;
-    doc.text(`${p.name} x${p.qty} ₹${p.price} GST:${gst} HSN:${p.hsn} → ₹${lineTotal.toFixed(2)}`,20,y); y+=6;
+  const doc = new jsPDF();
+  let y = 20;
+
+  // Get customer info
+  const customerName = document.getElementById("customerName").value || "N/A";
+  const customerAddress = document.getElementById("customerAddress").value || "N/A";
+
+  // Header
+  doc.setFontSize(16);
+  doc.text("THE PAMPOSH ELECTRICALS", 20, y); y += 8;
+  doc.setFontSize(12);
+  doc.text("A-Class Electrical Contractor (J&K)", 20, y); y += 8;
+  doc.text(`Invoice Date: ${new Date().toLocaleDateString()}`, 20, y); y += 10;
+
+  // Customer Info
+  doc.setFontSize(12);
+  doc.text(`Customer Name: ${customerName}`, 20, y); y += 6;
+  doc.text(`Delivery Address: ${customerAddress}`, 20, y); y += 10;
+
+  // Table Header
+  doc.setFontSize(10);
+  doc.text("------------------------------------------------------------", 20, y); y += 6;
+  doc.text("Product | Qty | Unit Price | GST(18%) | HSN | Line Total", 20, y); y += 6;
+  doc.text("------------------------------------------------------------", 20, y); y += 6;
+
+  // Table Rows
+  let totalAmount = 0;
+  cart.forEach(p => {
+    let gstAmount = (p.price * 0.18); // GST per unit
+    let lineTotal = (p.price + gstAmount) * p.qty;
+    totalAmount += lineTotal;
+
+    let line = `${p.name} | ${p.qty} | ₹${p.price.toFixed(2)} | ₹${gstAmount.toFixed(2)} | ${p.hsn} | ₹${lineTotal.toFixed(2)}`;
+    doc.text(line, 20, y);
+    y += 6;
   });
-  doc.text(`Total Amount: ₹${total.toFixed(2)}`,20,y+10);
+
+  doc.text("------------------------------------------------------------", 20, y); y += 8;
+
+  // Grand Total
+  doc.setFontSize(12);
+  doc.text(`Grand Total: ₹${totalAmount.toFixed(2)}`, 20, y+4);
+
   doc.save("Pamposh-Invoice.pdf");
 }
+
 
 // ======== ADMIN PANEL ========
 const adminList=document.getElementById('adminList');
