@@ -2,182 +2,254 @@
 <html lang="en">
 <head>
 <meta charset="UTF-8">
+<title>THE PAMPOSH ELECTRICALS | A-Class Electrical Contractor J&K</title>
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>The Pamposh Electricals</title>
+<meta name="description" content="THE PAMPOSH ELECTRICALS – A-Class Electrical Contractor in Jammu & Kashmir. Trusted by government & private clients.">
 
+<script src="https://cdn.tailwindcss.com"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
-
 <style>
-body{margin:0;font-family:-apple-system,system-ui;background:#f4f4f4}
-header{background:#fff;padding:16px;text-align:center;border-bottom:1px solid #ddd}
-.container{padding:14px}
-.card{background:#fff;border-radius:16px;padding:12px;margin-bottom:14px;
-box-shadow:0 6px 14px rgba(0,0,0,.06)}
-.card img{width:100%;height:160px;object-fit:cover;border-radius:12px}
-button{width:100%;padding:12px;border:none;border-radius:12px;background:#111;color:#fff;font-size:16px}
-.qty{display:flex;justify-content:center;gap:14px;margin-top:10px}
-.qty button{width:44px;font-size:20px}
-.checkout-btn{position:fixed;bottom:18px;right:18px;
-background:#111;color:#fff;padding:14px 24px;border-radius:30px}
-.summary{background:#fff;border-radius:16px;padding:14px;margin-bottom:16px}
+html{scroll-behavior:smooth} .gold{color:#c9a227}
 </style>
 </head>
+<body class="bg-gray-50 text-gray-800">
 
-<body>
-
-<header>
-<h2>The Pamposh Electricals</h2>
-<small>Class A Electrical Contractor | Jammu & Kashmir</small><br>
-<small><a href="https://instagram.com/thepamposhelectricals" target="_blank">@thepamposhelectricals</a></small>
+<!-- NAVBAR -->
+<header class="sticky top-0 z-50 bg-white shadow">
+  <div class="max-w-7xl mx-auto flex justify-between items-center p-4">
+    <div>
+      <h1 class="text-xl font-bold text-blue-900">THE PAMPOSH ELECTRICALS</h1>
+      <p class="text-xs gold">A-Class Electrical Contractor (J&K)</p>
+    </div>
+    <nav class="space-x-6 hidden md:block">
+      <a href="#home">Home</a>
+      <a href="#products">Products</a>
+      <a href="#about">About</a>
+      <a href="#contact">Contact</a>
+      <a href="#admin" class="gold">Admin</a>
+    </nav>
+  </div>
 </header>
 
-<div class="container">
+<!-- HERO -->
+<section id="home" class="bg-gradient-to-r from-blue-900 to-blue-800 text-white py-20">
+  <div class="max-w-7xl mx-auto px-6 text-center">
+    <h2 class="text-4xl font-bold mb-4">Powering Jammu & Kashmir with Reliable Electrical Solutions</h2>
+    <p class="text-lg mb-6">Government • Commercial • Residential Electrical Works</p>
+    <span class="inline-block bg-white text-blue-900 px-4 py-2 rounded font-semibold">✔ Approved A-Class Contractor</span>
+  </div>
+</section>
 
-<div class="summary" id="orderSummary">
-<b>Order Summary</b><br><br>
-<small>No items added</small>
+<!-- PRODUCTS -->
+<section id="products" class="max-w-7xl mx-auto px-6 py-16">
+<h3 class="text-3xl font-bold mb-6">Products</h3>
+<div class="grid md:grid-cols-3 gap-4 mb-6">
+  <input id="search" placeholder="Search products" class="p-3 border rounded">
+  <select id="wattFilter" class="p-3 border rounded">
+    <option value="">All Wattage</option>
+    <option value="12">12W</option>
+    <option value="50">50W</option>
+  </select>
+</div>
+<div id="productList" class="grid md:grid-cols-3 gap-6"></div>
+</section>
+
+<!-- ABOUT -->
+<section id="about" class="bg-white py-16">
+<div class="max-w-7xl mx-auto px-6">
+<h3 class="text-3xl font-bold mb-6">About Us</h3>
+<p class="text-lg">
+<strong>THE PAMPOSH ELECTRICALS</strong> is a certified <strong>A-Class Electrical Contractor</strong> executing government, commercial, and residential projects across Jammu & Kashmir with strict safety and quality standards.
+</p>
+</div>
+</section>
+
+<!-- CONTACT -->
+<section id="contact" class="max-w-7xl mx-auto px-6 py-16">
+<h3 class="text-3xl font-bold mb-6">Contact</h3>
+<p><strong>WhatsApp / Phone:</strong> +91 9419007084</p>
+<p><strong>Email:</strong> thepamposhelectricals@gmail.com</p>
+<p><strong>Instagram:</strong> @thepamposhelectricals</p>
+</section>
+
+<!-- ADMIN -->
+<section id="admin" class="bg-gray-100 py-16">
+<div class="max-w-3xl mx-auto px-6">
+<h3 class="text-3xl font-bold mb-6">Admin Panel</h3>
+<p class="mb-4">Add / Edit / Delete products (stored in browser)</p>
+<form id="adminForm" class="grid grid-cols-1 gap-3">
+  <input type="hidden" id="prodId">
+  <input type="text" id="prodName" placeholder="Product Name" class="p-2 border rounded">
+  <input type="number" id="prodPrice" placeholder="Price (₹)" class="p-2 border rounded">
+  <input type="number" id="prodWatt" placeholder="Wattage" class="p-2 border rounded">
+  <input type="text" id="prodHSN" placeholder="HSN Code" class="p-2 border rounded">
+  <input type="text" id="prodImage" placeholder="Image URL" class="p-2 border rounded">
+  <button type="submit" class="bg-blue-900 text-white px-4 py-2 rounded">Save Product</button>
+</form>
+<div id="adminList" class="mt-6"></div>
+</div>
+</section>
+
+<!-- FLOATING CART -->
+<div id="cartBox" class="fixed bottom-6 right-6 bg-blue-900 text-white p-4 rounded shadow-lg w-72 hidden">
+  <div class="flex justify-between mb-2">
+    <strong>Order Summary</strong>
+    <button onclick="closeCart()">✖</button>
+  </div>
+  <div id="cartItems" class="text-sm"></div>
+  <p id="cartTotal" class="mt-3 font-bold"></p>
+  <button onclick="generateInvoice()" class="mt-3 bg-yellow-500 w-full py-2 rounded text-black">Download Invoice (PDF)</button>
+  <button onclick="checkout()" class="mt-2 bg-green-500 w-full py-2 rounded">Checkout on WhatsApp</button>
 </div>
 
-<div id="products"></div>
-</div>
+<footer class="bg-gray-900 text-white text-center p-4">
+© 2026 THE PAMPOSH ELECTRICALS | Jammu & Kashmir
+</footer>
 
-<div class="checkout-btn" onclick="openCheckout()">Checkout 🛒</div>
-
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
 <script>
-const products=[
-{name:"Bajaj Ceiling Fan 1200mm",price:2899,img:"https://images.unsplash.com/photo-1581090700227-1e37b190418e"},
-{name:"Havells LED Panel Light 24W",price:799,img:"https://images.unsplash.com/photo-1509395176047-4a66953fd231"},
-{name:"Anchor Roma Modular Switch",price:149,img:"https://images.unsplash.com/photo-1581093588401-22a8f0d1c07a"},
-{name:"Polycab Copper Wire 1.5 sqmm",price:3299,img:"https://images.unsplash.com/photo-1581091870627-3c79b1a8f1b1"}
+// ======== PRODUCTS DATA ========
+let products = JSON.parse(localStorage.getItem('products')) || [
+  {id:1,name:"12W LED Surface Batten",price:520,watt:12,hsn:"9405",image:"https://via.placeholder.com/150"},
+  {id:2,name:"12W LED Concealed Batten",price:500,watt:12,hsn:"9405",image:"https://via.placeholder.com/150"},
+  {id:3,name:"50W Flood Light",price:820,watt:50,hsn:"9405",image:"https://via.placeholder.com/150"}
 ];
+localStorage.setItem('products', JSON.stringify(products));
 
-let cart={};
-const box=document.getElementById("products");
+let cart = JSON.parse(localStorage.getItem('cart')) || [];
 
-products.forEach((p,i)=>{
-box.innerHTML+=`
-<div class="card">
-<img src="${p.img}">
-<h4>${p.name}</h4>
-<b>₹${p.price}</b>
-<div id="ctrl${i}">
-<button onclick="add(${i})">Add to Cart</button>
-</div>
-</div>`;
-});
-
-function add(i){cart[i]=1;render(i);updateSummary()}
-function inc(i){cart[i]++;render(i);updateSummary()}
-function dec(i){
-cart[i]--;
-if(cart[i]<=0){delete cart[i];reset(i)}
-else render(i);
-updateSummary();
+// ======== RENDER PRODUCTS ========
+const productList = document.getElementById("productList");
+function renderProducts(){
+  productList.innerHTML="";
+  let searchVal = document.getElementById("search").value.toLowerCase();
+  let wattVal = document.getElementById("wattFilter").value;
+  let filtered = products.filter(p=>
+    p.name.toLowerCase().includes(searchVal) &&
+    (wattVal=="" || p.watt==wattVal)
+  );
+  filtered.forEach(p=>{
+    productList.innerHTML+=`
+      <div class="bg-white p-5 rounded shadow">
+        <img src="${p.image}" class="mb-2">
+        <h4 class="font-semibold">${p.name}</h4>
+        <p class="gold font-bold">₹${p.price}</p>
+        <button onclick="addToCart(${p.id})" class="mt-2 bg-blue-900 text-white px-4 py-2 rounded">Add to Cart</button>
+      </div>`;
+  });
 }
-function render(i){
-document.getElementById("ctrl"+i).innerHTML=
-`<div class="qty">
-<button onclick="dec(${i})">−</button>
-<b>${cart[i]}</b>
-<button onclick="inc(${i})">+</button>
-</div>`;
+renderProducts();
+
+// ======== CART FUNCTIONS ========
+function addToCart(id){
+  const item = cart.find(c=>c.id===id);
+  if(item) item.qty++;
+  else cart.push({...products.find(p=>p.id===id), qty:1});
+  updateCart(); localStorage.setItem('cart', JSON.stringify(cart));
 }
-function reset(i){
-document.getElementById("ctrl"+i).innerHTML=
-`<button onclick="add(${i})">Add to Cart</button>`;
+function removeFromCart(id){
+  cart = cart.filter(c=>c.id!==id); updateCart(); localStorage.setItem('cart', JSON.stringify(cart));
+}
+function decreaseQty(id){ let item=cart.find(c=>c.id===id); if(item.qty>1)item.qty--; else removeFromCart(id); updateCart(); localStorage.setItem('cart', JSON.stringify(cart)); }
+function increaseQty(id){ let item=cart.find(c=>c.id===id); item.qty++; updateCart(); localStorage.setItem('cart', JSON.stringify(cart)); }
+function updateCart(){
+  const cartBox=document.getElementById('cartBox'); const cartItems=document.getElementById('cartItems'); const cartTotal=document.getElementById('cartTotal');
+  if(cart.length===0){cartBox.classList.add('hidden'); return;}
+  cartBox.classList.remove('hidden'); cartItems.innerHTML="";
+  let total=0;
+  cart.forEach(item=>{
+    total+=item.price*item.qty;
+    cartItems.innerHTML+=`<div class="flex justify-between items-center mb-1">
+      <span>${item.name} x${item.qty}</span>
+      <div>
+        <button onclick="decreaseQty(${item.id})" class="mr-1">−</button>
+        <button onclick="increaseQty(${item.id})" class="mr-2">+</button>
+        <button onclick="removeFromCart(${item.id})">🗑️</button>
+      </div>
+    </div>`;
+  });
+  cartTotal.innerText=`Total: ₹${total}`;
+}
+function closeCart(){document.getElementById('cartBox').classList.add('hidden');}
+
+// ======== WHATSAPP CHECKOUT ========
+function checkout(){
+  if(cart.length===0) return alert("Cart empty!");
+  let msg="Hello THE PAMPOSH ELECTRICALS,%0A%0AI want to place an order:%0A";
+  let total=0;
+  cart.forEach(p=>{msg+=`- ${p.name} x${p.qty} – ₹${p.price*p.qty}%0A`; total+=p.price*p.qty;});
+  msg+=`%0ATotal Amount: ₹${total}%0ACustomer Name:%0ADelivery Address:`;
+  window.open(`https://wa.me/919419007084?text=${msg}`,'_blank');
 }
 
-function updateSummary(){
-let div=document.getElementById("orderSummary");
-let sub=0,html="<b>Order Summary</b><br><br>";
-
-if(Object.keys(cart).length===0){
-div.innerHTML=html+"<small>No items added</small>";
-return;
+// ======== PDF INVOICE ========
+function generateInvoice(){
+  if(cart.length===0) return alert("Cart empty!");
+  const { jsPDF } = window.jspdf;
+  const doc = new jsPDF(); let y=20;
+  doc.setFontSize(14); doc.text("THE PAMPOSH ELECTRICALS",20,y); y+=8;
+  doc.setFontSize(10); doc.text("A-Class Electrical Contractor (J&K)",20,y); y+=10;
+  doc.text(`Invoice Date: ${new Date().toLocaleDateString()}`,20,y); y+=10;
+  let total=0;
+  cart.forEach(p=>{
+    let gst=(p.price*0.18).toFixed(2);
+    let lineTotal=p.price*p.qty + parseFloat(gst)*p.qty; total+=lineTotal;
+    doc.text(`${p.name} x${p.qty} ₹${p.price} GST:${gst} HSN:${p.hsn} → ₹${lineTotal.toFixed(2)}`,20,y); y+=6;
+  });
+  doc.text(`Total Amount: ₹${total.toFixed(2)}`,20,y+10);
+  doc.save("Pamposh-Invoice.pdf");
 }
 
-for(let i in cart){
-let line=products[i].price*cart[i];
-sub+=line;
-html+=products[i].name+" × "+cart[i]+" = ₹"+line+"<br>";
+// ======== ADMIN PANEL ========
+const adminList=document.getElementById('adminList');
+function renderAdmin(){
+  adminList.innerHTML="";
+  products.forEach(p=>{
+    adminList.innerHTML+=`
+      <div class="flex justify-between items-center mb-1 bg-white p-2 rounded shadow">
+        <span>${p.name} ₹${p.price} W:${p.watt} HSN:${p.hsn}</span>
+        <div>
+          <button onclick="editProduct(${p.id})" class="mr-2">✏️</button>
+          <button onclick="deleteProduct(${p.id})">🗑️</button>
+        </div>
+      </div>`;
+  });
 }
-let gst=sub*0.18;
-let total=sub+gst;
-
-html+="<hr>GST (18%): ₹"+gst.toFixed(2);
-html+="<br><b>Total: ₹"+total.toFixed(2)+"</b>";
-
-div.innerHTML=html;
+function editProduct(id){
+  let p=products.find(p=>p.id===id);
+  document.getElementById('prodId').value=p.id;
+  document.getElementById('prodName').value=p.name;
+  document.getElementById('prodPrice').value=p.price;
+  document.getElementById('prodWatt').value=p.watt;
+  document.getElementById('prodHSN').value=p.hsn;
+  document.getElementById('prodImage').value=p.image;
 }
-
-function openCheckout(){
-if(Object.keys(cart).length===0){alert("Cart is empty");return;}
-
-const w=window.open("", "_blank");
-w.document.write(`
-<!DOCTYPE html>
-<html>
-<head>
-<title>Checkout</title>
-<style>
-body{font-family:-apple-system,system-ui;background:#f4f4f4;padding:14px}
-.card{background:#fff;border-radius:16px;padding:14px}
-input,button{width:100%;padding:12px;margin-bottom:10px;border-radius:10px}
-button{background:#111;color:#fff;border:none}
-</style>
-</head>
-<body>
-
-<div class="card">
-<h3>Customer Details</h3>
-
-<input id="name" placeholder="Full Name">
-<input id="phone" placeholder="Mobile Number">
-<input id="address" placeholder="Address">
-
-<button onclick="pay()">Generate QR & Invoice</button>
-<button onclick="window.close()">Close Checkout</button>
-</div>
-
-<script>
-const { jsPDF } = window.jspdf;
-const cart=${JSON.stringify(cart)};
-const products=${JSON.stringify(products)};
-
-function pay(){
-const n=name.value.trim(),p=phone.value.trim(),a=address.value.trim();
-if(!n||!p||!a){alert("Fill all details");return;}
-
-let sub=0,txt="Invoice – The Pamposh Electricals\\n\\n";
-txt+="Name: "+n+"\\nPhone: "+p+"\\nAddress: "+a+"\\n\\n";
-
-for(let i in cart){
-let l=products[i].price*cart[i];
-sub+=l;
-txt+=products[i].name+" x "+cart[i]+" = ₹"+l+"\\n";
+function deleteProduct(id){
+  products=products.filter(p=>p.id!==id);
+  localStorage.setItem('products',JSON.stringify(products));
+  renderAdmin(); renderProducts();
 }
-let gst=sub*0.18,total=sub+gst;
-txt+="\\nGST (18%): ₹"+gst.toFixed(2);
-txt+="\\nTotal: ₹"+total.toFixed(2);
+document.getElementById('adminForm').onsubmit=function(e){
+  e.preventDefault();
+  let id=document.getElementById('prodId').value;
+  let name=document.getElementById('prodName').value;
+  let price=document.getElementById('prodPrice').value;
+  let watt=document.getElementById('prodWatt').value;
+  let hsn=document.getElementById('prodHSN').value;
+  let image=document.getElementById('prodImage').value;
+  let prod={id:id?parseInt(id):Date.now(),name,price:parseFloat(price),watt:parseInt(watt),hsn,image};
+  if(id){
+    let idx=products.findIndex(p=>p.id==id); products[idx]=prod;
+  }else products.push(prod);
+  localStorage.setItem('products',JSON.stringify(products));
+  renderAdmin(); renderProducts();
+  this.reset();
+};
+renderAdmin();
 
-const pdf=new jsPDF();
-pdf.text(txt,10,10);
-pdf.save("Pamposh-Electricals-Invoice.pdf");
-
-const msg=encodeURIComponent(txt);
-window.open("https://wa.me/919419007084?text="+msg,"_blank");
-
-window.open(
-"https://api.qrserver.com/v1/create-qr-code/?size=250x250&data=upi://pay?pa=aban007084@okhdfcbank&pn=The%20Pamposh%20Electricals&am="+total.toFixed(2)+"&cu=INR",
-"_blank"
-);
-}
-<\/script>
-
-</body>
-</html>
-`);
-}
+// ======== FILTERS ========
+document.getElementById("search").oninput=renderProducts;
+document.getElementById("wattFilter").onchange=renderProducts;
 </script>
 
 </body>
