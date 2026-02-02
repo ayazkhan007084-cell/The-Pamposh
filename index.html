@@ -72,11 +72,12 @@ html{scroll-behavior:smooth} .gold{color:#c9a227}
 <p><strong>Instagram:</strong> @thepamposhelectricals</p>
 </section>
 
-<!-- ADMIN -->
-<section id="admin" class="bg-gray-100 py-16">
+<!-- ADMIN (locked) -->
+<section id="admin" class="bg-gray-100 py-16 hidden">
 <div class="max-w-3xl mx-auto px-6">
 <h3 class="text-3xl font-bold mb-6">Admin Panel</h3>
 <p class="mb-4">Add / Edit / Delete products (stored in browser)</p>
+
 <form id="adminForm" class="grid grid-cols-1 gap-3">
   <input type="hidden" id="prodId">
   <input type="text" id="prodName" placeholder="Product Name" class="p-2 border rounded">
@@ -89,6 +90,21 @@ html{scroll-behavior:smooth} .gold{color:#c9a227}
 <div id="adminList" class="mt-6"></div>
 </div>
 </section>
+
+<script>
+// ======== ADMIN PANEL PASSWORD LOCK ========
+document.querySelector('a[href="#admin"]').addEventListener('click', function(e){
+    e.preventDefault(); // prevent default jump
+    let password = prompt("Enter Admin Password:");
+    if(password === "Khan@123"){
+        document.getElementById("admin").classList.remove("hidden");
+        document.getElementById("admin").scrollIntoView({behavior:"smooth"});
+    } else {
+        alert("Incorrect Password! Access Denied.");
+    }
+});
+</script>
+
 
 <!-- FLOATING CART -->
 <div id="cartBox" class="fixed bottom-6 right-6 bg-blue-900 text-white p-4 rounded shadow-lg w-72 hidden">
